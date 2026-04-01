@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Kuesioner Materialitas Risiko ESG — PLTS Terapung · PLN</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+:root{
+  --navy:#0F2744; --blue:#1D4ED8; --blue2:#2563EB; --lblue:#DBEAFE; --xlblue:#EFF6FF;
+  --gold:#92400E; --lgold:#FEF3C7; --mgold:#F59E0B;
+  --green:#15803D; --lgreen:#DCFCE7; --mgreen:#22C55E;
+  --red:#B91C1C; --lred:#FEE2E2; --mred:#EF4444;
+  --orange:#C2410C; --lorange:#FFF7ED; --morange:#F97316;
+  --purple:#6D28D9; --lpurple:#EDE9FE;
+  --slate:#64748B; --lslate:#F1F5F9; --border:#E2E8F0;
+  --white:#fff; --ink:#0F172A;
+  --sh:0 1px 3px rgba(0,0,0,.07),0 4px 12px rgba(0,0,0,.06);
+  --sh-lg:0 8px 32px rgba(0,0,0,.14);
+  --r:12px; --rsm:8px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:#E8EDF5;color:var(--ink);min-height:100vh;font-size:14px}
+
+/* ── HEADER ── */
+.hdr{background:var(--navy);height:52px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 2px 12px rgba(0,0,0,.3)}
+.hdr-left{display:flex;align-items:center;gap:10px;min-width:0}
+.hdr-badge{background:rgba(255,255,255,.1);border-radius:6px;padding:4px 9px;font-size:.65rem;font-weight:800;color:var(--mgold);letter-spacing:.5px;white-space:nowrap}
+.hdr-title{font-size:.8rem;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.prog-pill{background:rgba(255,255,255,.07);border-radius:99px;padding:3px 10px;display:flex;align-items:center;gap:7px}
+.prog-txt{font-size:.62rem;color:rgba(255,255,255,.5);white-space:nowrap}
+.prog-track{width:100px;height:5px;background:rgba(255,255,255,.12);border-radius:99px}
+.prog-fill{height:5px;background:var(--mgold);border-radius:99px;transition:width .5s}
+
+/* ── STEP BAR ── */
+.steps-bar{background:#162e4a;border-bottom:1px solid rgba(255,255,255,.07);padding:0 16px;overflow-x:auto;scrollbar-width:none;position:sticky;top:52px;z-index:200}
+.steps-bar::-webkit-scrollbar{display:none}
+.steps-inner{display:flex;max-width:1100px;margin:0 auto}
+.step-btn{background:none;border:none;color:rgba(255,255,255,.38);font-family:'Inter',sans-serif;font-size:.67rem;font-weight:600;padding:9px 11px;cursor:pointer;white-space:nowrap;border-bottom:2.5px solid transparent;margin-bottom:-1px;transition:all .18s;display:flex;align-items:center;gap:5px}
+.step-btn:hover{color:rgba(255,255,255,.75)}
+.step-btn.active{color:var(--mgold);border-bottom-color:var(--mgold)}
+.step-dot{width:15px;height:15px;border-radius:50%;background:rgba(255,255,255,.1);font-size:.52rem;font-weight:800;display:grid;place-items:center;transition:all .3s;flex-shrink:0}
+.step-btn.done .step-dot{background:var(--green);color:#fff}
+.step-btn.partial .step-dot{background:var(--blue2);color:#fff}
+
+/* ── MAIN ── */
+.main{max-width:1100px;margin:0 auto;padding:20px 14px 60px}
+.panel{display:none}
+.panel.active{display:block;animation:fadeUp .22s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── CARD ── */
+.card{background:var(--white);border-radius:var(--r);box-shadow:var(--sh);overflow:hidden;margin-bottom:18px}
+.card-hdr{background:linear-gradient(135deg,var(--navy) 0%,#1e4080 100%);padding:16px 20px;color:#fff}
+.card-hdr h2{font-size:.92rem;font-weight:700}
+.card-hdr p{font-size:.73rem;opacity:.72;margin-top:5px;line-height:1.55}
+.card-body{padding:18px 20px}
+
+/* ── IDENTITY FIELDS ── */
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:.63rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select,.field textarea{border:1.5px solid var(--border);border-radius:var(--rsm);padding:9px 11px;font-family:'Inter',sans-serif;font-size:.82rem;background:var(--lgold);transition:all .2s;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--blue2);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.field textarea{resize:vertical;min-height:70px}
+
+/* ── SECTION HEADER (dimensi) ── */
+.dim-hdr{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--lslate)}
+.dim-icon{width:36px;height:36px;border-radius:8px;display:grid;place-items:center;flex-shrink:0;font-size:1rem}
+.dim-icon.met{background:#FFF7ED;color:#C2410C}
+.dim-icon.env{background:#F0FDF4;color:#15803D}
+.dim-icon.soc{background:var(--lpurple);color:var(--purple)}
+.dim-icon.gov{background:var(--lblue);color:var(--blue2)}
+.dim-text h3{font-size:.85rem;font-weight:700;margin-bottom:2px}
+.dim-text p{font-size:.72rem;color:var(--slate);line-height:1.45}
+.dim-count{margin-left:auto;background:var(--navy);color:#fff;border-radius:6px;padding:3px 9px;font-size:.65rem;font-weight:700;white-space:nowrap}
+
+/* ── PANDUAN SKOR ── */
+.guide-strip{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);font-size:.63rem;text-align:center}
+.guide-cell{background:var(--white);padding:6px 4px}
+.guide-num{font-size:.85rem;font-weight:800;display:block;margin-bottom:2px}
+.guide-cell:nth-child(1) .guide-num{color:var(--mgreen)}
+.guide-cell:nth-child(2) .guide-num{color:#84CC16}
+.guide-cell:nth-child(3) .guide-num{color:var(--mgold)}
+.guide-cell:nth-child(4) .guide-num{color:var(--morange)}
+.guide-cell:nth-child(5) .guide-num{color:var(--mred)}
+.guide-lbl{color:var(--slate);line-height:1.35;font-size:.6rem}
+
+/* ── ITEM RISIKO ── */
+.risk-item{padding:14px 20px;border-bottom:1px solid var(--border);transition:background .15s}
+.risk-item:last-child{border-bottom:none}
+.risk-item:hover{background:#FAFBFD}
+.risk-item.answered{background:#F8FFF9}
+.ri-top{display:flex;align-items:flex-start;gap:10px;margin-bottom:8px}
+.ri-code{background:var(--navy);color:#fff;border-radius:4px;padding:2px 8px;font-size:.65rem;font-weight:700;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.ri-code.met{background:#C2410C}
+.ri-code.env{background:#15803D}
+.ri-code.soc{background:var(--purple)}
+.ri-code.gov{background:var(--blue2)}
+.ri-name{font-size:.82rem;font-weight:600;color:var(--ink);line-height:1.4;flex:1}
+.ri-toggle{font-size:.65rem;color:var(--blue2);cursor:pointer;white-space:nowrap;flex-shrink:0;margin-top:2px;user-select:none}
+.ri-desc{font-size:.73rem;color:var(--slate);line-height:1.55;margin:0 0 10px 0;padding:8px 10px;background:var(--lslate);border-radius:6px;border-left:3px solid var(--border);display:none}
+.ri-desc.open{display:block}
+.ri-scores{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rs-group{display:flex;flex-direction:column;gap:6px}
+.rs-label{font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--slate)}
+.rs-sublabel{font-size:.62rem;color:var(--slate);font-style:italic;min-height:14px;transition:all .2s}
+.rs-btns{display:flex;gap:4px}
+.rb{width:36px;height:34px;border-radius:6px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-family:'Inter',sans-serif;font-size:.8rem;font-weight:700;transition:all .13s;color:var(--slate);display:grid;place-items:center;flex-shrink:0}
+.rb:hover{transform:translateY(-1px);border-color:var(--blue2);color:var(--blue2)}
+.rb.s1{background:#F0FDF4;border-color:#86EFAC;color:#15803D}
+.rb.s2{background:#F7FEE7;border-color:#BEF264;color:#4D7C0F}
+.rb.s3{background:#FEFCE8;border-color:#FDE047;color:#854D0E}
+.rb.s4{background:#FFF7ED;border-color:#FDB97D;color:#C2410C}
+.rb.s5{background:#FEF2F2;border-color:#FCA5A5;color:#B91C1C}
+.ri-result{display:flex;align-items:center;gap:8px;margin-top:10px;min-height:28px}
+.skor-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:99px;font-size:.72rem;font-weight:700}
+.skor-st{background:#FEE2E2;color:#B91C1C}
+.skor-t {background:#FFF7ED;color:#C2410C}
+.skor-s {background:#FEFCE8;color:#854D0E}
+.skor-r {background:#F0FDF4;color:#15803D}
+.ri-note{width:100%;margin-top:8px;padding:7px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:'Inter',sans-serif;font-size:.75rem;color:var(--ink);background:#fff;resize:none;height:46px;transition:all .2s}
+.ri-note:focus{outline:none;border-color:var(--blue2);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.ri-note::placeholder{color:#CBD5E1}
+
+/* ── SECTION PROGRESS ── */
+.sec-prog{display:flex;align-items:center;gap:10px;padding:10px 20px;background:var(--lslate);border-bottom:1px solid var(--border)}
+.sp-bar-wrap{flex:1;height:5px;background:var(--border);border-radius:99px;overflow:hidden}
+.sp-bar{height:5px;background:var(--mgreen);border-radius:99px;width:0%;transition:width .4s}
+.sp-txt{font-size:.65rem;color:var(--slate);font-weight:600;white-space:nowrap}
+
+/* ── NAV BAR ── */
+.nav-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;background:var(--lslate);border-top:1px solid var(--border);gap:10px;flex-wrap:wrap}
+.nav-info{font-size:.72rem;color:var(--slate);font-weight:500;flex:1;text-align:center}
+.btn-nav{display:flex;align-items:center;gap:6px;padding:9px 18px;border-radius:var(--rsm);border:none;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap}
+.btn-back{background:var(--white);color:var(--slate);border:1.5px solid var(--border)}
+.btn-back:hover{background:var(--border);color:var(--ink)}
+.btn-next{background:var(--blue2);color:#fff;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.btn-next:hover{background:#1d4ed8;transform:translateY(-1px)}
+.btn-export{background:var(--navy);color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+.btn-export:hover{background:#162e4a;transform:translateY(-1px)}
+.btn-nav:disabled{opacity:.4;cursor:not-allowed;transform:none}
+
+/* ── SUMMARY ── */
+.sum-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px}
+.sum-stat{border-radius:var(--rsm);padding:12px;text-align:center;font-size:.7rem;color:var(--slate);font-weight:600;border:1.5px solid transparent}
+.sum-stat .ss-num{font-size:1.6rem;font-weight:800;display:block;margin-bottom:2px}
+.sum-stat.st{background:#FEE2E2;border-color:#FCA5A5}.sum-stat.st .ss-num{color:var(--red)}
+.sum-stat.ti{background:#FFF7ED;border-color:#FDB97D}.sum-stat.ti .ss-num{color:var(--orange)}
+.sum-stat.sd{background:#FEFCE8;border-color:#FDE047}.sum-stat.sd .ss-num{color:#854D0E}
+.sum-stat.rd{background:#F0FDF4;border-color:#86EFAC}.sum-stat.rd .ss-num{color:var(--green)}
+
+.sum-table{width:100%;border-collapse:collapse;font-size:.76rem}
+.sum-table thead th{background:var(--lslate);padding:7px 10px;font-size:.63rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.4px;text-align:left;border-bottom:2px solid var(--border);position:sticky;top:0}
+.sum-table tbody td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;line-height:1.4}
+.sum-table tbody tr:last-child td{border-bottom:none}
+.sum-table tbody tr:hover td{background:var(--xlblue)}
+.sum-table .dim-sep td{background:var(--navy);color:rgba(255,255,255,.7);font-size:.63rem;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:5px 10px}
+
+.badge-code{display:inline-block;border-radius:4px;padding:2px 7px;font-size:.65rem;font-weight:700;letter-spacing:.3px;color:#fff}
+.badge-code.met{background:#C2410C}
+.badge-code.env{background:#15803D}
+.badge-code.soc{background:var(--purple)}
+.badge-code.gov{background:var(--blue2)}
+
+.badge-lv{display:inline-block;padding:3px 8px;border-radius:99px;font-size:.68rem;font-weight:700}
+.lv-st{background:#FEE2E2;color:#B91C1C}
+.lv-t {background:#FFF7ED;color:#C2410C}
+.lv-s {background:#FEFCE8;color:#854D0E}
+.lv-r {background:#F0FDF4;color:#15803D}
+.lv-na{background:var(--lslate);color:var(--slate)}
+
+/* ── EXPORT ACTIONS ── */
+.export-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;border-radius:8px;padding:10px 18px;font-size:.78rem;font-weight:600;z-index:999;transition:transform .3s;box-shadow:var(--sh-lg);white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  .hdr-title{font-size:.72rem}
+  .prog-pill{display:none}
+  .fg{grid-template-columns:1fr}
+  .ri-scores{grid-template-columns:1fr}
+  .sum-stats{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .hdr{height:46px;padding:0 12px}
+  .hdr-badge{display:none}
+  .steps-bar{top:46px}
+  .step-dot{display:none}
+  .step-btn{padding:8px 8px;font-size:.62rem}
+  .nav-bar{padding:10px 12px}
+  .btn-nav{padding:8px 13px;font-size:.72rem}
+  .rb{width:32px;height:30px;font-size:.75rem}
+  .guide-strip{grid-template-columns:repeat(5,1fr)}
+}
+@media print{
+  .hdr,.steps-bar,.nav-bar,.toast{display:none!important}
+  body{background:#fff}
+  .main{padding:0;max-width:100%}
+  .panel{display:block!important;page-break-after:always}
+  .card{box-shadow:none;border:1px solid #ccc}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-left">
+    <div class="hdr-badge">MRS · PLN</div>
+    <div class="hdr-title">Kuesioner Materialitas Risiko ESG — PLTS Terapung</div>
+  </div>
+  <div class="hdr-right">
+    <div class="prog-pill">
+      <span class="prog-txt" id="prog-lbl">0 / 37 dinilai</span>
+      <div class="prog-track"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="steps-bar">
+  <div class="steps-inner" id="steps-inner"></div>
+</nav>
+
+<main class="main">
+  <div id="panels-wrap"></div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════
+   DATA
+══════════════════════════════════════════════════════ */
+const DIMS = [
+  {
+    id:'M', short:'Meteorologis', label:'Dimensi Meteorologis', cls:'met',
+    icon:'🌤',
+    desc:'Variabilitas kondisi atmosfer dan iklim yang memengaruhi kinerja, output energi, dan keandalan operasional sistem PLTS terapung.',
+    items:[
+      {code:'M-1', name:'Variabilitas & Intermitensi Produksi Energi Akibat Tutupan Awan',
+       desc:'Deviasi antara proyeksi dan realisasi produksi listrik akibat fluktuasi tutupan awan tropis (rata-rata TCC nasional 75,6%). Memengaruhi kelayakan finansial dan keandalan suplai ke jaringan. Koefisien variasi output tahunan mencapai 8–22% di lokasi tropis (Nassar et al., 2021).'},
+      {code:'M-2', name:'Penurunan Output Mendadak Akibat Dinamika Atmosfer (Ramp Rate Tinggi)',
+       desc:'Penurunan daya mendadak 40–60% dalam 1–5 menit akibat perubahan tutupan awan, menciptakan fluktuasi frekuensi jaringan. Nilai ramp rate tertinggi berimplikasi pada kebutuhan respons cepat sistem pembangkit lain atau BESS (Marcos et al., 2016).'},
+      {code:'M-3', name:'Penurunan Efisiensi Termal Modul Akibat Suhu Tinggi',
+       desc:'Peningkatan suhu modul di atas 25°C menurunkan efisiensi 0,38–0,45%/°C. Rata-rata suhu udara lokasi kajian 26,2°C. FSPV mendapat keuntungan pendinginan evaporatif dari air (reduksi suhu modul 4–8°C vs. instalasi darat; Liu et al., 2023).'},
+      {code:'M-4', name:'Ketidakseimbangan Suplai Musiman (Seasonal Index)',
+       desc:'Variasi produksi antara musim kemarau dan hujan (seasonal index 1,3–2,1 di berbagai lokasi kajian). Berdampak pada perencanaan kapasitas jangka panjang, pola dispatch, dan struktur pendapatan proyek (ESMAP/World Bank, 2020).'},
+      {code:'M-5', name:'Gangguan Produksi Akibat Presipitasi Intensitas Tinggi',
+       desc:'Curah hujan rata-rata nasional 213,5 mm/bulan mengurangi iradiasi efektif. Hujan lebat juga memengaruhi soiling secara ganda: mengurangi output sekaligus membersihkan panel dari deposisi debu (Atsu et al., 2021).'},
+      {code:'M-6', name:'Ketidakstabilan Struktural Akibat Kecepatan Angin Ekstrem',
+       desc:'Meski rata-rata angin nasional rendah (1,17 m/s), lokasi di koridor orografis atau tepi waduk terbuka mencatat angin sesaat hingga 15 m/s yang melampaui ambang batas teknis platform terapung standar (IEC 61215; Liu et al., 2017).'},
+      {code:'M-7', name:'Degradasi Komponen Akibat Kelembapan Relatif Tinggi & Korosi',
+       desc:'Kelembapan relatif rata-rata nasional 82,1% meningkatkan laju korosi pada konektor/junction box dan mempercepat Potential Induced Degradation (PID). Pada RH >85%, risiko PID meningkat 3–5 kali lipat melebihi degradasi normal (Luo et al., 2017).'},
+      {code:'M-8', name:'Akumulasi Debu & Kotoran (Soiling Loss)',
+       desc:'Deposisi partikel debu, serbuk sari, dan biofilm alga dari partikel air mengurangi transmitansi cahaya panel. Di FSPV, soiling lebih rendah dari PLTS darat namun biofilm alga menjadi tantangan spesifik yang belum banyak dikaji (Maghami et al., 2016).'},
+      {code:'M-9', name:'Variabilitas Radiasi Difus vs. Radiasi Langsung (Diffuse Fraction)',
+       desc:'Di iklim tropis berawan, radiasi difus mencapai 50–70% dari GHI. Hal ini memengaruhi keputusan investasi tracker dan pemilihan teknologi modul, karena single-axis tracker kehilangan keuntungannya pada kondisi berawan tinggi (Gueymard & Ruiz-Arias, 2016).'},
+    ]
+  },
+  {
+    id:'E', short:'Environmental', label:'Dimensi Environmental', cls:'env',
+    icon:'🌿',
+    desc:'Risiko terhadap ekosistem perairan, kualitas air, keanekaragaman hayati, dan dampak fisik-geologi pada lokasi waduk yang dikembangkan.',
+    items:[
+      {code:'E-1', name:'Penurunan Kualitas Air & Oksigen Terlarut (DO)',
+       desc:'Penutupan permukaan air menghambat re-aerasi alami, menurunkan DO 8–18% di zona tertutup. Berdampak pada biota akuatik aerobik. Cirata (2023): DO turun 8% di zona panel vs. kontrol dalam 12 bulan pertama operasi (HEPE, 2023).'},
+      {code:'E-2', name:'Gangguan Ekosistem & Keanekaragaman Hayati Akuatik',
+       desc:'Reduksi intensitas cahaya di bawah panel menghambat fotosintesis fitoplankton. Studi Korea Selatan (Kim et al., 2019) melaporkan penurunan biomassa fitoplankton 35–60% dan keanekaragaman zooplankton 28% pada cakupan panel >40%.'},
+      {code:'E-3', name:'Kontaminasi Air dari Material Panel, Pelampung & Mooring',
+       desc:'Material polimer (HDPE, EVA) berpotensi melepaskan mikroplastik dan bahan kimia beracun ke badan air akibat degradasi UV dan hidrolisis. Yan et al. (2022) mendeteksi senyawa organik dari degradasi EVA backsheet setelah 5 tahun operasional di 3 waduk Cina.'},
+      {code:'E-4', name:'Perubahan Stratifikasi Termal & Siklus Nutrien',
+       desc:'Penutupan permukaan mengubah profil termal kolom air dan siklus nitrogen-fosfor. Liu et al. (2023) mencatat peningkatan stratifikasi termal 1,8–3,2°C/m pada 12 waduk Cina pascainstall FSPV. Pada waduk eutrofik, berisiko memperparah blooming alga.'},
+      {code:'E-5', name:'Risiko Gempa Bumi & Kerusakan Struktural Infrastruktur',
+       desc:'Indonesia berada di Ring of Fire dengan >500 gempa signifikan/tahun. Getaran seismik dapat merusak struktur terapung, sistem mooring, kabel bawah air, dan infrastruktur sipil (SNI 1726:2019; Mulia et al., 2020).'},
+      {code:'E-6', name:'Penurunan Muka Air Ekstrem (Kekeringan/El Niño) & Stabilitas Platform',
+       desc:'El Niño 2023 menyebabkan penurunan muka air di 43 waduk nasional. Penurunan >3 m dari desain operasional dapat menyebabkan platform kandas, mooring terlalu tegang, dan inklinasi panel abnormal. Risiko meningkat dengan intensifikasi ENSO akibat perubahan iklim.'},
+      {code:'E-7', name:'Banjir Ekstrem, Gelombang Waduk & Beban Hidrodinamis',
+       desc:'Banjir ekstrem meningkatkan arus dan gelombang internal waduk melebihi desain nominal. Debris hanyutan dari hulu dapat merusak panel dan kabel. Typhoon Haishen (2020): FSPV Saemangeum Korea mengalami kerusakan mooring 15% akibat arus >2 m/s (Choi et al., 2020).'},
+      {code:'E-8', name:'Gangguan Jalur Migrasi Burung & Satwa Liar Akuatik',
+       desc:'Permukaan panel memantulkan cahaya terpolarisasi yang membingungkan burung air ("lake effect"). Horváth et al. (2018) mendokumentasikan bahwa efek ini menarik >60 spesies serangga akuatik. Waduk di jalur EAAF (East Asian-Australasian Flyway) lebih rentan.'},
+      {code:'E-9', name:'Degradasi Tepi Waduk & Sedimentasi Akibat Konstruksi',
+       desc:'Kegiatan konstruksi di tepi waduk meningkatkan erosi dan sedimentasi. FSPV Koyna, India (2021): turbiditas meningkat 40% selama konstruksi. Jangkar mooring juga berpotensi mendestabilisasi dasar waduk (India MNRE, 2021).'},
+      {code:'E-10', name:'Dampak Visual Lanskap & Degradasi Nilai Pariwisata',
+       desc:'Instalasi skala besar mengubah karakter visual lanskap waduk destinasi wisata. Studi PUPR (2022) menyimpulkan FSPV >15% luas berpotensi menurunkan kunjungan wisata 20–35% di Danau Batur dan Cirata yang berdekatan dengan jalur wisata aktif.'},
+      {code:'E-11', name:'Bahaya Longsor Lereng Waduk & Gelombang Impulsif',
+       desc:'Longsor pada lereng terjal dapat menghasilkan gelombang impulsif yang merusak struktur panel terapung. Waduk Karangkates (Jatim): 7 titik rawan longsor teridentifikasi dalam radius 500 m tepi waduk (BNPB, 2022). Lereng vulkanik menghadirkan ketidakstabilan inherent.'},
+      {code:'E-12', name:'Pengelolaan Limbah Panel Surya Akhir Masa Pakai (End-of-Life)',
+       desc:'Panel surya mengandung material beracun (Cd, Pb, Se). Untuk kapasitas 8.700 MW, volume limbah mencapai >200.000 ton pada 2050–2055. Indonesia belum memiliki regulasi khusus end-of-life panel per 2024 (Lunardi et al., 2020; IRENA, 2016).'},
+    ]
+  },
+  {
+    id:'S', short:'Sosial', label:'Dimensi Sosial', cls:'soc',
+    icon:'👥',
+    desc:'Risiko dari dinamika kemasyarakatan, hak komunitas, keselamatan kerja, dan akseptabilitas sosial pengembangan PLTS terapung.',
+    items:[
+      {code:'S-1', name:'Konflik & Penolakan Komunitas Nelayan & Pembudidaya Ikan',
+       desc:'Nelayan dan pembudidaya ikan yang bergantung pada perairan waduk merupakan kelompok paling terdampak. ADB (2022): 67% proyek FSPV yang terlambat >12 bulan di Asia disebabkan kurangnya konsultasi inklusif. Cirata memerlukan 24 bulan negosiasi dengan 1.200 keluarga KJA.'},
+      {code:'S-2', name:'Kepadatan Penduduk Tinggi & Kompleksitas Konsultasi Publik',
+       desc:'Waduk yang dikelilingi kawasan padat (>500 jiwa/km²) memerlukan proses AMDAL dan konsultasi publik yang jauh lebih kompleks, berpotensi memperlambat perizinan 6–24 bulan. Kedung Ombo: trauma sosial relokasi 1989 masih meninggalkan sensitivitas tinggi.'},
+      {code:'S-3', name:'Gangguan Aktivitas Pariwisata, Rekreasi & Olahraga Air',
+       desc:'Instalasi FSPV skala besar mengurangi area rekreasi air yang menjadi sumber pendapatan UMKM lokal. Wonogiri: wisata Gajahmungkur menyumbang PDRB pariwisata >Rp 15 miliar/tahun (BPS Wonogiri, 2022). Bila Bili (Sulsel): pusat olahraga air regional.'},
+      {code:'S-4', name:'Keselamatan dan Kesehatan Kerja (K3) Operasional Akuatik',
+       desc:'FSPV menghadirkan risiko K3 unik: listrik tegangan tinggi (1.500 VDC) di lingkungan basah, risiko tenggelam, dan kerja di ketinggian. IRENA (2021): insiden K3 FSPV 2× lebih tinggi dari PLTS darat. Thailand (2022): 2 fatality saat pemeliharaan panel dalam kondisi hujan.'},
+      {code:'S-5', name:'Hak & Partisipasi Masyarakat Adat (Free, Prior and Informed Consent)',
+       desc:'Sejumlah waduk di luar Jawa (Kalimantan, Sulawesi, NTT, Maluku) bersinggungan dengan wilayah adat. Tanpa FPIC sesuai ILO-169 & UNDRIP, proyek rentan gugatan hukum internasional. Bangladesh 2023: proyek FSPV 100 MW dibatalkan karena melanggar hak adat Chakma (UNHRC, 2023).'},
+      {code:'S-6', name:'Keterbatasan Infrastruktur Kelistrikan & Kompleksitas Integrasi Jaringan',
+       desc:'Banyak waduk di luar Jawa berada di daerah dengan rasio elektrifikasi rendah dan jaringan lemah, memerlukan investasi transmisi tambahan 15–30% dari total project cost. Waduk Beriwit (Kaltim): jarak ke jaringan transmisi terdekat >80 km (PLN UID Kaltim, 2022).'},
+      {code:'S-7', name:'Gangguan Nilai Budaya, Sakral & Aktivitas Keagamaan',
+       desc:'Sejumlah waduk memiliki nilai sakral atau menjadi lokasi ritual keagamaan (upacara adat, sedekah bumi, labuhan). Instalasi yang mengubah estetika perairan berpotensi mencederai nilai-nilai budaya yang tidak dapat dikompensasi secara finansial (UNESCO, 2003).'},
+      {code:'S-8', name:'Kesenjangan Distribusi Manfaat & Keadilan Energi (Energy Justice)',
+       desc:'IESR (2023): 60% proyek EBT skala besar di Indonesia tidak memiliki mekanisme distribusi manfaat lokal yang terstruktur. Afrika Selatan: Community Benefit Fund wajib untuk IPP >5 MW berhasil meningkatkan penerimaan sosial dari 45% ke 78% dalam 5 tahun (NERSA, 2022).'},
+    ]
+  },
+  {
+    id:'G', short:'Governance', label:'Dimensi Governance', cls:'gov',
+    icon:'⚖️',
+    desc:'Risiko dari fragmentasi kewenangan kelembagaan, kerangka regulasi, proses administrasi perizinan, dan ketidakpastian kebijakan.',
+    items:[
+      {code:'G-1', name:'Tumpang-Tindih Kewenangan & Konflik Yurisdiksi Multi-Lembaga',
+       desc:'Proyek FSPV melibatkan ≥5 kementerian/lembaga (ESDM, PUPR, KLHK, ATR/BPN, Pemda) dengan kewenangan tumpang-tindih. World Bank (2022): proyek EBT di Indonesia rata-rata memerlukan 42 izin dan waktu rata-rata 3,5 tahun. Cirata: ≥23 izin dari 5 instansi berbeda.'},
+      {code:'G-2', name:'Ketidakpastian Hak Pengelolaan & Status Legalitas Waduk',
+       desc:'Kepemilikan waduk yang terfragmentasi (PUPR/BBWS, PJT I & II, Pemda, BUMN) menciptakan ambiguitas legal dalam pemberian izin pemanfaatan badan air. Jatiluhur: dualisme pengelolaan PJT II (operasi) vs. BBWS Citarum (pemilik aset) — siapa yang berwenang menandatangani izin?'},
+      {code:'G-3', name:'Keterlambatan & Kompleksitas Proses AMDAL untuk Proyek Perairan',
+       desc:'AMDAL untuk badan air memerlukan kajian spesifik ekosistem akuatik yang sangat langka keahliannya. KLHK (2022): rata-rata review AMDAL proyek EBT 18–30 bulan. IESR (2023): 78% pengembang mengidentifikasi AMDAL sebagai hambatan terbesar proyek EBT.'},
+      {code:'G-4', name:'Ketidaksesuaian Tata Ruang & RTRW Kabupaten/Kota',
+       desc:'KESDM (2023): 68% dari 109 lokasi waduk belum tercantum dalam RTRW daerah sebagai kawasan pembangkitan EBT. Revisi RTRW memerlukan persetujuan DPRD dan sinkronisasi RTR Nasional yang dapat memakan 2–4 tahun.'},
+      {code:'G-5', name:'Risiko Korupsi, Ketidaktransparanan & Tata Kelola Pengadaan',
+       desc:'KPK (2023): 42% kabupaten/kota Indonesia masih dalam kategori "rentan korupsi" (skor MCP <70). KPK: 23% kasus korupsi sektor energi terjadi di fase perizinan dan pengadaan. Proyek geothermal Jawa Barat terlambat 36 bulan akibat penyelidikan KPK terkait perizinan.'},
+      {code:'G-6', name:'Ketidakpastian Kebijakan Tarif Listrik EBT & Skema PPA',
+       desc:'Permen ESDM terkait tarif EBT direvisi 5 kali antara 2015–2022, menyebabkan >30 proyek EBT gagal financial close (IESR, 2023). India: tarif FSPV turun dari Rs 5,5 ke Rs 2,1/kWh dalam 5 tahun, mengurangi margin IRR 8–12% dan membekukan banyak proyek.'},
+      {code:'G-7', name:'Persyaratan BESS Wajib & Dampaknya terhadap Bankability Proyek',
+       desc:'Regulasi PLN yang mensyaratkan BESS untuk PLTS >10 MW di sistem tertentu menambah CAPEX 20–30% dan memperumit struktur pembiayaan. Cirata: persyaratan BESS 20 MWh menambah biaya USD 12 juta (±6% CAPEX total; HEPE, 2023).'},
+      {code:'G-8', name:'Risiko Keamanan Aset, Pencurian & Sabotase',
+       desc:'Panel, inverter, dan kabel tembaga merupakan aset bernilai tinggi yang rentan pencurian di lokasi terpencil. IRENA (2022): pencurian kabel tembaga = 20% biaya O&M di PLTS sub-Saharan Africa. India (2021): 3 kasus vandalisme FSPV Gujarat dipicu konflik nelayan yang tidak terkompensasi.'},
+    ]
+  },
+];
+
+const P_LABELS = ['Hampir Mustahil','Jarang Terjadi','Mungkin Terjadi','Kemungkinan Besar','Hampir Pasti'];
+const I_LABELS = ['Dampak Minor','Dampak Kecil','Dampak Moderat','Dampak Mayor','Dampak Katastrofik'];
+const P_HINTS  = ['Probabilitas sangat rendah (<5%); hampir tidak mungkin terjadi dalam kondisi normal','Probabilitas rendah (5–20%); terjadi dalam kondisi sangat tidak biasa','Probabilitas sedang (20–50%); dapat terjadi dalam kondisi tertentu yang wajar','Probabilitas tinggi (50–80%); lebih mungkin terjadi daripada tidak','Probabilitas sangat tinggi (>80%); dapat dianggap hampir pasti akan terjadi'];
+const I_HINTS  = ['Dampak sangat kecil; mudah diatasi; tidak memengaruhi kelangsungan proyek','Dampak kecil; gangguan minor yang dapat diselesaikan dalam operasional rutin','Dampak moderat; gangguan operasional signifikan yang memerlukan tindakan khusus','Dampak mayor; kerugian finansial/reputasi yang besar dan sulit dipulihkan dalam jangka pendek','Dampak katastrofik; berpotensi menghentikan proyek secara permanen atau menyebabkan kerugian sistemik'];
+
+/* ══════════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════════ */
+const state = { identity:{}, scores:{} };
+// Pre-init scores
+DIMS.forEach(d => d.items.forEach(it => { state.scores[it.code] = {P:null, I:null, note:''}; }));
+
+let currentPage = 0;
+
+/* ══════════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════════ */
+function scoreLevel(s) {
+  if(s >= 20) return {lbl:'Sangat Tinggi', cls:'lv-st', badgeCls:'skor-st'};
+  if(s >= 12) return {lbl:'Tinggi',        cls:'lv-t',  badgeCls:'skor-t'};
+  if(s >= 6)  return {lbl:'Sedang',        cls:'lv-s',  badgeCls:'skor-s'};
+  return              {lbl:'Rendah',       cls:'lv-r',  badgeCls:'skor-r'};
+}
+
+function totalItems() { return DIMS.reduce((a,d)=>a+d.items.length,0); }
+
+function countAnswered() {
+  return Object.values(state.scores).filter(s=>s.P&&s.I).length;
+}
+
+function dimAnswered(dimId) {
+  const dim = DIMS.find(d=>d.id===dimId);
+  return dim.items.filter(it=>state.scores[it.code].P&&state.scores[it.code].I).length;
+}
+
+function updateGlobalProgress() {
+  const done = countAnswered(), total = totalItems();
+  document.getElementById('prog-lbl').textContent = `${done} / ${total} dinilai`;
+  document.getElementById('prog-fill').style.width = Math.round(done/total*100) + '%';
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2500);
+}
+
+/* ══════════════════════════════════════════════════════
+   BUILD UI
+══════════════════════════════════════════════════════ */
+const PAGES = [
+  {id:'diri', short:'Data Diri', type:'identity'},
+  ...DIMS.map(d=>({id:d.id, short:d.short, type:'dim', dim:d})),
+  {id:'hasil', short:'Hasil', type:'summary'},
+];
+
+const stepsEl = document.getElementById('steps-inner');
+const panelsEl = document.getElementById('panels-wrap');
+
+PAGES.forEach((pg, idx) => {
+  // Step button
+  const btn = document.createElement('button');
+  btn.className = 'step-btn';
+  btn.id = 'sbtn-' + idx;
+  btn.onclick = () => goTo(idx);
+  btn.innerHTML = `<span class="step-dot" id="sdot-${idx}">${idx+1}</span>${pg.short}`;
+  stepsEl.appendChild(btn);
+
+  const panel = document.createElement('div');
+  panel.className = 'panel';
+  panel.id = 'panel-' + idx;
+
+  if(pg.type === 'identity') {
+    panel.innerHTML = buildIdentity(idx);
+  } else if(pg.type === 'dim') {
+    panel.innerHTML = buildDim(pg.dim, idx);
+  } else {
+    panel.innerHTML = buildSummary(idx);
+  }
+  panelsEl.appendChild(panel);
+});
+
+/* ── Identity page ── */
+function buildIdentity(idx) {
+  return `
+  <div class="card">
+    <div class="card-hdr">
+      <h2>Data Diri Penilai</h2>
+      <p>Isi data diri lengkap. Data ini digunakan untuk identifikasi, rekam jejak, dan agregasi hasil penilaian materialitas antar penilai.</p>
+    </div>
+    <div class="card-body">
+      <div class="fg">
+        <div class="field"><label>Nama Lengkap</label><input id="f-nama" type="text" placeholder="Nama lengkap Anda" oninput="syncId()"></div>
+        <div class="field"><label>Divisi / Unit Kerja</label><input id="f-div" type="text" placeholder="mis. UP3 Jawa Timur / MRS Pusat" oninput="syncId()"></div>
+        <div class="field"><label>Jabatan / Spesialisasi</label><input id="f-jab" type="text" placeholder="mis. Manajer Perencanaan EBT" oninput="syncId()"></div>
+        <div class="field"><label>Tanggal Pengisian</label><input id="f-tgl" type="date" oninput="syncId()"></div>
+        <div class="field"><label>Email Dinas</label><input id="f-email" type="email" placeholder="nama@pln.co.id" oninput="syncId()"></div>
+        <div class="field"><label>Lokasi Waduk yang Dinilai</label><input id="f-lokasi" type="text" placeholder="Nama waduk / PLTST-XX (opsional)" oninput="syncId()"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hdr"><h2>Petunjuk Pengisian</h2><p>Penilaian Materialitas Risiko ESG PLTS Terapung — Metode Matriks P × I</p></div>
+    <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${[
+        ['1','Dua sumbu penilaian','Setiap variabel dinilai pada dua dimensi secara independen: <strong>Probabilitas (P)</strong> — seberapa mungkin risiko terjadi, dan <strong>Dampak/Impact (I)</strong> — seberapa besar dampak jika terjadi. Kedua dimensi menggunakan skala 1–5.','#EFF6FF'],
+        ['2','Cara membaca skala','<strong>1 = Rendah</strong> hingga <strong>5 = Sangat Tinggi</strong>. Skor akhir dihitung otomatis: P × I. Hasil 1–5 = Rendah · 6–11 = Sedang · 12–19 = Tinggi · 20–25 = Sangat Tinggi.','#F0FDF4'],
+        ['3','Klik tombol skor','Pada setiap variabel, pilih satu tombol untuk P dan satu untuk I. Skor dan level risiko langsung muncul setelah kedua nilai dipilih. Kolom catatan/justifikasi tersedia untuk mendokumentasikan dasar penilaian.','#FFFBEB'],
+        ['4','Navigasi halaman','Gunakan tombol Berikutnya/Sebelumnya atau klik langsung pada tab di atas. Halaman terakhir menampilkan rekap lengkap semua 37 variabel dengan opsi unduh CSV.','#FFF1F2'],
+        ['💡','Dasar penilaian','Gunakan pengetahuan teknis Anda, data operasional lapangan, dan pengalaman proyek sebagai dasar penilaian. Tidak ada jawaban yang benar atau salah — penilaian ini bertujuan mengangkap perspektif ahli dari dalam PLN.','#F0F9FF'],
+      ].map(([n,t,d,bg])=>`
+      <div style="display:flex;gap:9px;padding:11px 13px;border-radius:8px;background:${bg}">
+        <div style="font-size:1rem;flex-shrink:0">${n}</div>
+        <div><div style="font-weight:700;font-size:.8rem;margin-bottom:3px">${t}</div><div style="font-size:.71rem;color:var(--slate);line-height:1.5">${d}</div></div>
+      </div>`).join('')}
+    </div>
+  </div>
+  ${navBar(idx)}`;
+}
+
+/* ── Dimension page ── */
+function buildDim(dim, idx) {
+  const clr = {met:'#C2410C',env:'#15803D',soc:'#6D28D9',gov:'#2563EB'}[dim.cls];
+
+  const guideP = P_LABELS.map((l,i)=>`
+    <div class="guide-cell">
+      <span class="guide-num">${i+1}</span>
+      <span class="guide-lbl">${l}</span>
+    </div>`).join('');
+
+  const guideI = I_LABELS.map((l,i)=>`
+    <div class="guide-cell">
+      <span class="guide-num">${i+1}</span>
+      <span class="guide-lbl">${l}</span>
+    </div>`).join('');
+
+  const items = dim.items.map((item) => {
+    const klass = dim.cls;
+    const btnsP = [1,2,3,4,5].map(n=>`
+      <button class="rb" id="p${item.code}-${n}" onclick="setScore('${item.code}','P',${n})"
+        title="${P_HINTS[n-1]}">${n}</button>`).join('');
+    const btnsI = [1,2,3,4,5].map(n=>`
+      <button class="rb" id="i${item.code}-${n}" onclick="setScore('${item.code}','I',${n})"
+        title="${I_HINTS[n-1]}">${n}</button>`).join('');
+
+    return `
+    <div class="risk-item" id="ri-${item.code}">
+      <div class="ri-top">
+        <span class="ri-code ${klass}">${item.code}</span>
+        <span class="ri-name">${item.name}</span>
+        <span class="ri-toggle" onclick="toggleDesc('${item.code}')">+ keterangan</span>
+      </div>
+      <div class="ri-desc" id="desc-${item.code}">${item.desc}</div>
+      <div class="ri-scores">
+        <div class="rs-group">
+          <div class="rs-label">Probabilitas (P) — kemungkinan terjadi</div>
+          <div class="rs-btns">${btnsP}</div>
+          <div class="rs-sublabel" id="ph-${item.code}">Pilih nilai 1–5</div>
+        </div>
+        <div class="rs-group">
+          <div class="rs-label">Dampak (I) — besaran jika terjadi</div>
+          <div class="rs-btns">${btnsI}</div>
+          <div class="rs-sublabel" id="ih-${item.code}">Pilih nilai 1–5</div>
+        </div>
+      </div>
+      <div class="ri-result" id="res-${item.code}"></div>
+      <textarea class="ri-note" id="note-${item.code}" placeholder="Catatan / justifikasi penilaian (opsional)..."
+        oninput="state.scores['${item.code}'].note=this.value" rows="2"></textarea>
+    </div>`;
+  }).join('');
+
+  return `
+  <div class="card">
+    <div class="dim-hdr">
+      <div class="dim-icon ${dim.cls}">${dim.icon}</div>
+      <div class="dim-text">
+        <h3>${dim.label}</h3>
+        <p>${dim.desc}</p>
+      </div>
+      <div class="dim-count" id="dc-${dim.id}">0 / ${dim.items.length}</div>
+    </div>
+    <div class="sec-prog">
+      <div class="sp-bar-wrap"><div class="sp-bar" id="spb-${dim.id}"></div></div>
+      <div class="sp-txt" id="spt-${dim.id}">Belum ada penilaian</div>
+    </div>
+    <div style="padding:12px 20px 6px">
+      <div style="font-size:.65rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">Panduan Skala Probabilitas (P)</div>
+      <div class="guide-strip">${guideP}</div>
+      <div style="font-size:.65rem;font-weight:700;color:var(--slate);text-transform:uppercase;letter-spacing:.5px;margin:10px 0 6px">Panduan Skala Dampak/Impact (I)</div>
+      <div class="guide-strip">${guideI}</div>
+    </div>
+    ${items}
+    ${navBar(idx)}
+  </div>`;
+}
+
+/* ── Summary page ── */
+function buildSummary(idx) {
+  return `
+  <div class="card">
+    <div class="card-hdr">
+      <h2>Rekap Hasil Penilaian Materialitas Risiko ESG</h2>
+      <p>Ringkasan semua 37 variabel risiko. Periksa kelengkapan dan konsistensi penilaian sebelum mengunduh.</p>
+    </div>
+    <div class="card-body">
+      <div class="sum-stats">
+        <div class="sum-stat st"><span class="ss-num" id="ss-st">0</span>Sangat Tinggi</div>
+        <div class="sum-stat ti"><span class="ss-num" id="ss-t">0</span>Tinggi</div>
+        <div class="sum-stat sd"><span class="ss-num" id="ss-s">0</span>Sedang</div>
+        <div class="sum-stat rd"><span class="ss-num" id="ss-r">0</span>Rendah</div>
+      </div>
+      <div id="sum-meta" style="font-size:.75rem;color:var(--slate);margin-bottom:14px;padding:8px 12px;background:var(--lslate);border-radius:6px"></div>
+      <div style="overflow-x:auto">
+        <table class="sum-table" id="sum-table">
+          <thead><tr>
+            <th style="width:72px">Kode</th>
+            <th>Variabel Risiko</th>
+            <th style="width:36px;text-align:center">P</th>
+            <th style="width:36px;text-align:center">I</th>
+            <th style="width:48px;text-align:center">Skor</th>
+            <th style="width:100px">Level</th>
+            <th>Catatan</th>
+          </tr></thead>
+          <tbody id="sum-tbody"></tbody>
+        </table>
+      </div>
+      <div class="export-row">
+        <button class="btn-nav btn-export" onclick="exportCSV()">⬇ Unduh CSV</button>
+        <button class="btn-nav btn-export" onclick="exportJSON()" style="background:#374151">⬇ Unduh JSON</button>
+        <button class="btn-nav btn-next" onclick="printPage()">🖨 Cetak / PDF</button>
+      </div>
+    </div>
+    ${navBar(idx, true)}
+  </div>`;
+}
+
+function navBar(idx, isLast=false) {
+  const isFirst = idx === 0;
+  const isSum   = idx === PAGES.length - 1;
+  return `
+  <div class="nav-bar">
+    <button class="btn-nav btn-back" onclick="goTo(${idx-1})" ${isFirst?'disabled':''}>← Sebelumnya</button>
+    <div class="nav-info" id="nav-info-${idx}"></div>
+    ${isSum
+      ? `<button class="btn-nav btn-next" onclick="scrollTo({top:0,behavior:'smooth'})">↑ Ke atas</button>`
+      : `<button class="btn-nav btn-next" onclick="goTo(${idx+1})">Berikutnya →</button>`}
+  </div>`;
+}
+
+/* ══════════════════════════════════════════════════════
+   INTERACTIONS
+══════════════════════════════════════════════════════ */
+function syncId() {
+  state.identity = {
+    nama:   document.getElementById('f-nama')?.value  || '',
+    div:    document.getElementById('f-div')?.value   || '',
+    jab:    document.getElementById('f-jab')?.value   || '',
+    tgl:    document.getElementById('f-tgl')?.value   || '',
+    email:  document.getElementById('f-email')?.value || '',
+    lokasi: document.getElementById('f-lokasi')?.value|| '',
+  };
+}
+
+function toggleDesc(code) {
+  const el = document.getElementById('desc-' + code);
+  const tog = el.previousElementSibling;
+  const open = el.classList.toggle('open');
+  tog.textContent = open ? '− sembunyikan' : '+ keterangan';
+}
+
+function setScore(code, dim, val) {
+  state.scores[code][dim] = val;
+  // Update buttons
+  const prefix = dim === 'P' ? 'p' : 'i';
+  [1,2,3,4,5].forEach(n => {
+    const btn = document.getElementById(`${prefix}${code}-${n}`);
+    if(!btn) return;
+    btn.className = 'rb';
+    if(n === val) btn.classList.add('s'+n);
+  });
+  // Update hint
+  const hintEl = document.getElementById((dim==='P'?'ph-':'ih-') + code);
+  if(hintEl) hintEl.textContent = dim==='P' ? P_HINTS[val-1] : I_HINTS[val-1];
+  // Update badge
+  updateBadge(code);
+  // Update item state
+  const item = document.getElementById('ri-' + code);
+  const sc = state.scores[code];
+  if(item) item.classList.toggle('answered', !!(sc.P && sc.I));
+  // Update section progress
+  const dimId = code.split('-')[0];
+  updateDimProgress(dimId);
+  updateGlobalProgress();
+}
+
+function updateBadge(code) {
+  const sc = state.scores[code];
+  const el = document.getElementById('res-' + code);
+  if(!el) return;
+  if(sc.P && sc.I) {
+    const total = sc.P * sc.I;
+    const lv = scoreLevel(total);
+    el.innerHTML = `<span class="skor-badge ${lv.badgeCls}">Skor: <strong>${total}</strong> — ${lv.lbl}</span>`;
+  } else {
+    el.innerHTML = '';
+  }
+}
+
+function updateDimProgress(dimId) {
+  const dim = DIMS.find(d=>d.id===dimId);
+  if(!dim) return;
+  const done = dimAnswered(dimId);
+  const total = dim.items.length;
+  const pct = Math.round(done/total*100);
+  const barEl = document.getElementById('spb-' + dimId);
+  const txtEl = document.getElementById('spt-' + dimId);
+  const cntEl = document.getElementById('dc-' + dimId);
+  if(barEl) barEl.style.width = pct + '%';
+  if(txtEl) txtEl.textContent = done === total ? `✓ Semua ${total} variabel dinilai` : `${done} dari ${total} variabel dinilai`;
+  if(cntEl) cntEl.textContent = `${done} / ${total}`;
+  // Update step dot
+  const pageIdx = PAGES.findIndex(p=>p.id===dimId);
+  const dot = document.getElementById('sdot-' + pageIdx);
+  const btn = document.getElementById('sbtn-' + pageIdx);
+  if(dot && btn) {
+    if(done === total) { btn.classList.add('done'); btn.classList.remove('partial'); }
+    else if(done > 0)  { btn.classList.add('partial'); btn.classList.remove('done'); }
+    else               { btn.classList.remove('done','partial'); }
+  }
+}
+
+function refreshSummary() {
+  const tbody = document.getElementById('sum-tbody');
+  if(!tbody) return;
+  tbody.innerHTML = '';
+  let st=0, t=0, s=0, r=0;
+
+  DIMS.forEach(dim => {
+    const sepRow = document.createElement('tr');
+    sepRow.className = 'dim-sep';
+    sepRow.innerHTML = `<td colspan="7">${dim.icon} ${dim.label}</td>`;
+    tbody.appendChild(sepRow);
+
+    dim.items.forEach(item => {
+      const sc = state.scores[item.code];
+      const p = sc.P || '—';
+      const i = sc.I || '—';
+      const total = (sc.P && sc.I) ? sc.P * sc.I : null;
+      const lv = total ? scoreLevel(total) : null;
+      if(lv) {
+        if(lv.cls==='lv-st') st++;
+        else if(lv.cls==='lv-t') t++;
+        else if(lv.cls==='lv-s') s++;
+        else r++;
+      }
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="badge-code ${dim.cls}">${item.code}</span></td>
+        <td style="font-size:.75rem">${item.name}</td>
+        <td style="text-align:center;font-weight:700">${p}</td>
+        <td style="text-align:center;font-weight:700">${i}</td>
+        <td style="text-align:center;font-weight:800;font-size:.85rem">${total||'—'}</td>
+        <td>${lv ? `<span class="badge-lv ${lv.cls}">${lv.lbl}</span>` : '<span class="badge-lv lv-na">Belum dinilai</span>'}</td>
+        <td style="font-size:.7rem;color:var(--slate)">${sc.note||'—'}</td>`;
+      tbody.appendChild(tr);
+    });
+  });
+
+  document.getElementById('ss-st').textContent = st;
+  document.getElementById('ss-t').textContent  = t;
+  document.getElementById('ss-s').textContent  = s;
+  document.getElementById('ss-r').textContent  = r;
+
+  const meta = document.getElementById('sum-meta');
+  const id = state.identity;
+  meta.textContent = [
+    id.nama   ? `Penilai: ${id.nama}` : '',
+    id.div    ? `Unit: ${id.div}` : '',
+    id.lokasi ? `Waduk: ${id.lokasi}` : '',
+    id.tgl    ? `Tanggal: ${id.tgl}` : '',
+  ].filter(Boolean).join('  ·  ') || 'Data diri belum diisi.';
+
+  updateGlobalProgress();
+}
+
+/* ══════════════════════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════════════════════ */
+function goTo(idx) {
+  if(idx < 0 || idx >= PAGES.length) return;
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('panel-' + idx).classList.add('active');
+  document.getElementById('sbtn-' + idx).classList.add('active');
+  currentPage = idx;
+  if(PAGES[idx].type === 'summary') refreshSummary();
+  window.scrollTo({top:0, behavior:'smooth'});
+  updateNavInfo(idx);
+}
+
+function updateNavInfo(idx) {
+  const el = document.getElementById('nav-info-' + idx);
+  if(el) {
+    const done = countAnswered(), total = totalItems();
+    el.textContent = `${done} dari ${total} variabel telah dinilai`;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   EXPORT
+══════════════════════════════════════════════════════ */
+function exportCSV() {
+  syncId();
+  const id = state.identity;
+  let csv = `Kuesioner Materialitas Risiko ESG — PLTS Terapung · PLN\n`;
+  csv += `Penilai,${id.nama||''}\nDivisi,${id.div||''}\nJabatan,${id.jab||''}\nLokasi Waduk,${id.lokasi||''}\nTanggal,${id.tgl||''}\nEmail,${id.email||''}\n\n`;
+  csv += `Kode,Variabel Risiko,Dimensi,Probabilitas (P),Dampak (I),Skor (P×I),Level Risiko,Catatan Penilai\n`;
+  DIMS.forEach(dim => {
+    dim.items.forEach(item => {
+      const sc = state.scores[item.code];
+      const p = sc.P || '';
+      const i = sc.I || '';
+      const total = (sc.P && sc.I) ? sc.P * sc.I : '';
+      const lv = total ? scoreLevel(total).lbl : '';
+      const note = (sc.note || '').replace(/,/g,' ').replace(/\n/g,' ').replace(/"/g,"'");
+      csv += `${item.code},"${item.name}","${dim.label}",${p},${i},${total},${lv},"${note}"\n`;
+    });
+  });
+  download(csv, `Kuesioner_ESG_PLTS_${id.lokasi||'Waduk'}_${id.tgl||new Date().toISOString().slice(0,10)}.csv`, 'text/csv;charset=utf-8;');
+}
+
+function exportJSON() {
+  syncId();
+  const out = {
+    metadata: { ...state.identity, exportedAt: new Date().toISOString() },
+    scores: {}
+  };
+  DIMS.forEach(dim => {
+    dim.items.forEach(item => {
+      const sc = state.scores[item.code];
+      const total = (sc.P && sc.I) ? sc.P * sc.I : null;
+      out.scores[item.code] = {
+        name: item.name, dimensi: dim.label,
+        P: sc.P, I: sc.I, skor: total,
+        level: total ? scoreLevel(total).lbl : null,
+        catatan: sc.note
+      };
+    });
+  });
+  download(JSON.stringify(out, null, 2), `Kuesioner_ESG_PLTS_${state.identity.tgl||'2024'}.json`, 'application/json');
+}
+
+function download(content, filename, mime) {
+  const blob = new Blob([content], {type: mime});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+
+function printPage() { window.print(); }
+
+/* ══════════════════════════════════════════════════════
+   INIT
+══════════════════════════════════════════════════════ */
+(function init() {
+  document.getElementById('panel-0').classList.add('active');
+  document.getElementById('sbtn-0').classList.add('active');
+  // Set today's date default
+  const tgl = document.getElementById('f-tgl');
+  if(tgl) tgl.valueAsDate = new Date();
+  updateGlobalProgress();
+  updateNavInfo(0);
+})();
+</script>
+</body>
+</html>
