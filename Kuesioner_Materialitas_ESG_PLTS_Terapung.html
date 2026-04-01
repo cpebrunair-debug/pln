@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Kuesioner Materialitas Risiko ESG — PLTS Terapung · PLN</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 :root{
@@ -175,6 +176,34 @@ body{font-family:'Inter',sans-serif;background:#E8EDF5;color:var(--ink);min-heig
 /* ── EXPORT ACTIONS ── */
 .export-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:18px}
 
+/* ── DIM PICKER ── */
+.dim-pick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dim-pick-card{display:flex;gap:12px;padding:14px;border-radius:10px;border:2px solid var(--border);background:var(--white);cursor:pointer;transition:all .18s;user-select:none}
+.dim-pick-card:hover{border-color:var(--dc,var(--blue2));background:var(--dbg,var(--xlblue))}
+.dim-pick-card.selected{border-color:var(--dc,var(--blue2));background:var(--dbg,var(--xlblue));box-shadow:0 0 0 3px rgba(0,0,0,.08)}
+.dpc-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:grid;place-items:center;font-size:.65rem;font-weight:800;color:transparent;background:var(--white);flex-shrink:0;margin-top:1px;transition:all .18s}
+.dim-pick-card.selected .dpc-check{background:var(--dc,var(--blue2));border-color:var(--dc,var(--blue2));color:#fff}
+.dpc-icon{font-size:1.5rem;flex-shrink:0;margin-top:2px}
+.dpc-info{flex:1;min-width:0}
+.dpc-name{font-size:.83rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.dpc-sub{font-size:.65rem;font-weight:600;color:var(--dc,var(--slate));margin-bottom:4px}
+.dpc-desc{font-size:.68rem;color:var(--slate);line-height:1.45}
+@media(max-width:600px){.dim-pick-grid{grid-template-columns:1fr}}
+
+/* ── DIM PICKER ── */
+.dim-pick-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dim-pick-card{display:flex;gap:12px;padding:14px;border-radius:10px;border:2px solid var(--border);background:var(--white);cursor:pointer;transition:all .18s;position:relative;user-select:none}
+.dim-pick-card:hover{border-color:var(--dc);background:var(--dbg)}
+.dim-pick-card.selected{border-color:var(--dc);background:var(--dbg);box-shadow:0 0 0 3px color-mix(in srgb, var(--dc) 20%, transparent)}
+.dpc-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:grid;place-items:center;font-size:.65rem;font-weight:800;color:transparent;background:var(--white);flex-shrink:0;margin-top:1px;transition:all .18s}
+.dim-pick-card.selected .dpc-check{background:var(--dc);border-color:var(--dc);color:#fff}
+.dpc-icon{font-size:1.4rem;flex-shrink:0;margin-top:1px}
+.dpc-info{flex:1;min-width:0}
+.dpc-name{font-size:.82rem;font-weight:700;color:var(--ink);margin-bottom:2px}
+.dpc-sub{font-size:.65rem;font-weight:600;color:var(--dc,var(--slate));margin-bottom:4px}
+.dpc-desc{font-size:.68rem;color:var(--slate);line-height:1.45}
+@media(max-width:600px){.dim-pick-grid{grid-template-columns:1fr}}
+
 /* ── TOAST ── */
 .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;border-radius:8px;padding:10px 18px;font-size:.78rem;font-weight:600;z-index:999;transition:transform .3s;box-shadow:var(--sh-lg);white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
@@ -205,6 +234,28 @@ body{font-family:'Inter',sans-serif;background:#E8EDF5;color:var(--ink);min-heig
   .panel{display:block!important;page-break-after:always}
   .card{box-shadow:none;border:1px solid #ccc}
 }
+/* ── DRIVE BUTTON ── */
+.btn-drive{background:#fff;color:#1a73e8;border:1.5px solid #1a73e8;display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:var(--rsm);font-family:'Inter',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;transition:all .18s;white-space:nowrap;box-shadow:0 1px 4px rgba(26,115,232,.15)}
+.btn-drive:hover{background:#1a73e8;color:#fff;transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,115,232,.35)}
+.btn-drive:disabled{opacity:.45;cursor:not-allowed;transform:none!important}
+.btn-drive.loading{background:#e8f0fe;color:#1a73e8;border-color:#a8c7fa}
+.btn-drive svg{flex-shrink:0}
+/* ── MODAL ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:900;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+.modal-overlay.open{display:flex;animation:fadeUp .2s ease}
+.modal-box{background:#fff;border-radius:16px;width:100%;max-width:520px;box-shadow:0 24px 64px rgba(0,0,0,.25);overflow:hidden}
+.modal-hdr{background:linear-gradient(135deg,var(--navy),#1a3a6b);padding:18px 22px;color:#fff;display:flex;justify-content:space-between;align-items:flex-start}
+.modal-hdr h3{font-size:.9rem;font-weight:700;margin-bottom:4px}
+.modal-hdr p{font-size:.72rem;opacity:.7;line-height:1.5}
+.modal-close{background:rgba(255,255,255,.1);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;display:grid;place-items:center;flex-shrink:0;margin-left:10px;transition:background .15s}
+.modal-close:hover{background:rgba(255,255,255,.25)}
+.modal-body{padding:20px 22px}
+.drive-status{display:none;margin-top:8px;padding:10px 14px;border-radius:8px;font-size:.75rem;font-weight:600}
+.drive-status.ok{display:flex;gap:8px;background:#dcfce7;color:#15803d;border:1.5px solid #bbf7d0;align-items:center}
+.drive-status.err{display:flex;gap:8px;background:#fee2e2;color:#b91c1c;border:1.5px solid #fca5a5;align-items:center}
+.drive-status.sending{display:flex;gap:8px;background:#eff6ff;color:#1a73e8;border:1.5px solid #bfdbfe;align-items:center}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid currentColor;border-top-color:transparent;border-radius:50%;animation:spinning .7s linear infinite;flex-shrink:0}
+@keyframes spinning{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -231,6 +282,36 @@ body{font-family:'Inter',sans-serif;background:#E8EDF5;color:var(--ink);min-heig
 </main>
 
 <div class="toast" id="toast"></div>
+
+<div class="modal-overlay" id="drive-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <div>
+        <h3>📤 Kirim Hasil ke Google Drive</h3>
+        <p>PDF hasil penilaian ESG akan dikirim langsung ke folder Google Drive penelitian</p>
+      </div>
+      <button class="modal-close" onclick="closeDriveModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="display:flex;gap:12px;padding:14px 16px;border-radius:10px;background:#eff6ff;border:1.5px solid #bfdbfe;margin-bottom:16px">
+        <div style="font-size:1.4rem;flex-shrink:0">📁</div>
+        <div>
+          <div style="font-weight:700;font-size:.82rem;color:#1e3a5f;margin-bottom:4px">Terhubung ke Google Drive</div>
+          <div style="font-size:.73rem;color:#3b5f8a;line-height:1.6">File PDF akan tersimpan otomatis ke folder <b>PLTS Terapung — ESG Responses</b>.<br>Tidak diperlukan login — cukup klik tombol kirim di bawah.</div>
+        </div>
+      </div>
+      <div style="padding:11px 14px;border-radius:8px;background:#f8faff;border:1px solid #e0eaff;font-size:.75rem;color:#374151;margin-bottom:16px" id="modal-identity-preview">Memuat data pengisi...</div>
+      <div id="drive-send-status" class="drive-status"></div>
+      <div style="display:flex;gap:10px;margin-top:12px;justify-content:flex-end">
+        <button class="btn-nav btn-back" onclick="closeDriveModal()" style="font-size:.75rem;padding:8px 16px">Batal</button>
+        <button class="btn-drive" id="btn-do-send" onclick="sendToDrive()" style="font-size:.75rem;padding:8px 18px">
+          <svg width="16" height="16" viewBox="0 0 87.3 78" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3L27.5 53H0c0 1.55.4 3.1 1.2 4.5L6.6 66.85z" fill="#0066DA"/><path d="M43.65 25L29.9 1.2C28.55.4 27 0 25.45 0c-1.55 0-3.1.4-4.5 1.2L6.6 11.15c-1.35.8-2.5 1.95-3.3 3.3L16.1 37.5h27.5V25z" fill="#00AC47"/><path d="M73.55 76.8c1.35-.8 2.5-1.95 3.3-3.3l1.6-2.75L86.1 57.5c.8-1.4 1.2-2.95 1.2-4.5H59.8L73.55 76.8z" fill="#EA4335"/><path d="M43.65 25v28.5H71.2L57.2 14.45c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25z" fill="#00832D"/><path d="M0 53.5c0 1.55.4 3.1 1.2 4.5l3.85 6.65 9.6 9.95c1.35.8 2.9 1.2 4.45 1.2H27.5L43.65 53.5H0z" fill="#2684FC"/><path d="M43.65 25H16.1l9.35-23.8c1.35-.8 2.9-1.2 4.45-1.2 1.55 0 3.1.4 4.5 1.2l9.25 23.8z" fill="#00AC47"/></svg>
+          Kirim
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 /* ══════════════════════════════════════════════════════
@@ -346,151 +427,208 @@ const I_LABELS = ['Dampak Minor','Dampak Kecil','Dampak Moderat','Dampak Mayor',
 const P_HINTS  = ['Probabilitas sangat rendah (<5%); hampir tidak mungkin terjadi dalam kondisi normal','Probabilitas rendah (5–20%); terjadi dalam kondisi sangat tidak biasa','Probabilitas sedang (20–50%); dapat terjadi dalam kondisi tertentu yang wajar','Probabilitas tinggi (50–80%); lebih mungkin terjadi daripada tidak','Probabilitas sangat tinggi (>80%); dapat dianggap hampir pasti akan terjadi'];
 const I_HINTS  = ['Dampak sangat kecil; mudah diatasi; tidak memengaruhi kelangsungan proyek','Dampak kecil; gangguan minor yang dapat diselesaikan dalam operasional rutin','Dampak moderat; gangguan operasional signifikan yang memerlukan tindakan khusus','Dampak mayor; kerugian finansial/reputasi yang besar dan sulit dipulihkan dalam jangka pendek','Dampak katastrofik; berpotensi menghentikan proyek secara permanen atau menyebabkan kerugian sistemik'];
 
-/* ══════════════════════════════════════════════════════
-   STATE
-══════════════════════════════════════════════════════ */
+/* ═══════════════════════ STATE ═══════════════════════ */
 const state = { identity:{}, scores:{} };
-// Pre-init scores
-DIMS.forEach(d => d.items.forEach(it => { state.scores[it.code] = {P:null, I:null, note:''}; }));
+DIMS.forEach(d => d.items.forEach(it => { state.scores[it.code] = {P:null,I:null,note:''}; }));
 
-let currentPage = 0;
+const selectedDims = new Set();
+let PAGES = [];
+let currentPage = -1; // -1 = opener
 
-/* ══════════════════════════════════════════════════════
-   HELPERS
-══════════════════════════════════════════════════════ */
+/* ═══════════════════════ HELPERS ════════════════════ */
 function scoreLevel(s) {
-  if(s >= 20) return {lbl:'Sangat Tinggi', cls:'lv-st', badgeCls:'skor-st'};
-  if(s >= 12) return {lbl:'Tinggi',        cls:'lv-t',  badgeCls:'skor-t'};
-  if(s >= 6)  return {lbl:'Sedang',        cls:'lv-s',  badgeCls:'skor-s'};
-  return              {lbl:'Rendah',       cls:'lv-r',  badgeCls:'skor-r'};
+  if(s>=20) return {lbl:'Sangat Tinggi',cls:'lv-st',badgeCls:'skor-st'};
+  if(s>=12) return {lbl:'Tinggi',cls:'lv-t',badgeCls:'skor-t'};
+  if(s>=6)  return {lbl:'Sedang',cls:'lv-s',badgeCls:'skor-s'};
+  return           {lbl:'Rendah',cls:'lv-r',badgeCls:'skor-r'};
 }
-
-function totalItems() { return DIMS.reduce((a,d)=>a+d.items.length,0); }
-
-function countAnswered() {
-  return Object.values(state.scores).filter(s=>s.P&&s.I).length;
-}
-
-function dimAnswered(dimId) {
-  const dim = DIMS.find(d=>d.id===dimId);
-  return dim.items.filter(it=>state.scores[it.code].P&&state.scores[it.code].I).length;
-}
-
+function totalItems() { return DIMS.filter(d=>selectedDims.has(d.id)).reduce((a,d)=>a+d.items.length,0); }
+function countAnswered() { return DIMS.filter(d=>selectedDims.has(d.id)).flatMap(d=>d.items).filter(it=>state.scores[it.code].P&&state.scores[it.code].I).length; }
+function dimAnswered(dimId) { const dim=DIMS.find(d=>d.id===dimId); return dim.items.filter(it=>state.scores[it.code].P&&state.scores[it.code].I).length; }
 function updateGlobalProgress() {
-  const done = countAnswered(), total = totalItems();
-  document.getElementById('prog-lbl').textContent = `${done} / ${total} dinilai`;
-  document.getElementById('prog-fill').style.width = Math.round(done/total*100) + '%';
+  const done=countAnswered(),total=totalItems();
+  document.getElementById('prog-lbl').textContent = total ? `${done} / ${total} dinilai` : '—';
+  document.getElementById('prog-fill').style.width = total ? Math.round(done/total*100)+'%' : '0%';
 }
-
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2500);
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+function syncId() {
+  state.identity = {
+    nama:  document.getElementById('f-nama')?.value||'',
+    div:   document.getElementById('f-div')?.value||'',
+    jab:   document.getElementById('f-jab')?.value||'',
+    tgl:   document.getElementById('f-tgl')?.value||'',
+    email: document.getElementById('f-email')?.value||'',
+  };
 }
 
-/* ══════════════════════════════════════════════════════
-   BUILD UI
-══════════════════════════════════════════════════════ */
-const PAGES = [
-  {id:'diri', short:'Data Diri', type:'identity'},
-  ...DIMS.map(d=>({id:d.id, short:d.short, type:'dim', dim:d})),
-  {id:'hasil', short:'Hasil', type:'summary'},
-];
+/* ═══════════════════ OPENER PAGE BUILDERS ══════════════════ */
+function buildOpenerHTML() {
+  const colorMap={met:'#C2410C',env:'#15803D',soc:'#6D28D9',gov:'#2563EB'};
+  const bgMap={met:'#FFF7ED',env:'#F0FDF4',soc:'#EDE9FE',gov:'#EFF6FF'};
+  const borderMap={met:'#FDB97D',env:'#86EFAC',soc:'#C4B5FD',gov:'#93C5FD'};
+  const dimCards = DIMS.map(d=>`
+    <div class="dim-pick-card" id="dpc-${d.id}" onclick="toggleDim('${d.id}')"
+      style="--dc:${colorMap[d.cls]};--dbg:${bgMap[d.cls]};--dborder:${borderMap[d.cls]}">
+      <div class="dpc-check" id="dpc-chk-${d.id}">✓</div>
+      <div class="dpc-icon">${d.icon}</div>
+      <div class="dpc-info">
+        <div class="dpc-name">${d.label}</div>
+        <div class="dpc-sub">${d.items.length} variabel risiko</div>
+        <div class="dpc-desc">${d.desc}</div>
+      </div>
+    </div>`).join('');
 
-const stepsEl = document.getElementById('steps-inner');
-const panelsEl = document.getElementById('panels-wrap');
-
-PAGES.forEach((pg, idx) => {
-  // Step button
-  const btn = document.createElement('button');
-  btn.className = 'step-btn';
-  btn.id = 'sbtn-' + idx;
-  btn.onclick = () => goTo(idx);
-  btn.innerHTML = `<span class="step-dot" id="sdot-${idx}">${idx+1}</span>${pg.short}`;
-  stepsEl.appendChild(btn);
-
-  const panel = document.createElement('div');
-  panel.className = 'panel';
-  panel.id = 'panel-' + idx;
-
-  if(pg.type === 'identity') {
-    panel.innerHTML = buildIdentity(idx);
-  } else if(pg.type === 'dim') {
-    panel.innerHTML = buildDim(pg.dim, idx);
-  } else {
-    panel.innerHTML = buildSummary(idx);
-  }
-  panelsEl.appendChild(panel);
-});
-
-/* ── Identity page ── */
-function buildIdentity(idx) {
   return `
   <div class="card">
     <div class="card-hdr">
-      <h2>Data Diri Penilai</h2>
-      <p>Isi data diri lengkap. Data ini digunakan untuk identifikasi, rekam jejak, dan agregasi hasil penilaian materialitas antar penilai.</p>
+      <h2>Kuesioner Materialitas Risiko ESG — PLTS Terapung</h2>
+      <p>Asesmen umum tingkat nasional untuk memperoleh baseline materialitas risiko pengembangan PLTS terapung di Indonesia. Gunakan perspektif umum nasional berdasarkan pengetahuan teknis dan pengalaman proyek Anda.</p>
     </div>
-    <div class="card-body">
-      <div class="fg">
-        <div class="field"><label>Nama Lengkap</label><input id="f-nama" type="text" placeholder="Nama lengkap Anda" oninput="syncId()"></div>
-        <div class="field"><label>Divisi / Unit Kerja</label><input id="f-div" type="text" placeholder="mis. UP3 Jawa Timur / MRS Pusat" oninput="syncId()"></div>
-        <div class="field"><label>Jabatan / Spesialisasi</label><input id="f-jab" type="text" placeholder="mis. Manajer Perencanaan EBT" oninput="syncId()"></div>
-        <div class="field"><label>Tanggal Pengisian</label><input id="f-tgl" type="date" oninput="syncId()"></div>
-        <div class="field"><label>Email Dinas</label><input id="f-email" type="email" placeholder="nama@pln.co.id" oninput="syncId()"></div>
-        <div class="field"><label>Lokasi Waduk yang Dinilai</label><input id="f-lokasi" type="text" placeholder="Nama waduk / PLTST-XX (opsional)" oninput="syncId()"></div>
+    <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="display:flex;gap:9px;padding:11px 13px;border-radius:8px;background:#EFF6FF">
+        <div style="font-size:1rem;flex-shrink:0">🌐</div>
+        <div><div style="font-weight:700;font-size:.8rem;margin-bottom:3px">Pendekatan umum nasional</div><div style="font-size:.71rem;color:var(--slate);line-height:1.5">Penilaian tidak dimaksudkan sebagai evaluasi satu lokasi tertentu, melainkan untuk menangkap pandangan profesional mengenai isu ESG yang paling material di Indonesia.</div></div>
+      </div>
+      <div style="display:flex;gap:9px;padding:11px 13px;border-radius:8px;background:#F0FDF4">
+        <div style="font-size:1rem;flex-shrink:0">📊</div>
+        <div><div style="font-weight:700;font-size:.8rem;margin-bottom:3px">Metode P × I</div><div style="font-size:.71rem;color:var(--slate);line-height:1.5">Setiap variabel dinilai pada dua sumbu: <strong>Probabilitas (P)</strong> dan <strong>Dampak (I)</strong>, skala 1–5. Skor = P×I. Rendah 1–5 · Sedang 6–11 · Tinggi 12–19 · Sangat Tinggi 20–25.</div></div>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="card-hdr"><h2>Petunjuk Pengisian</h2><p>Penilaian Materialitas Risiko ESG PLTS Terapung — Metode Matriks P × I</p></div>
-    <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      ${[
-        ['1','Dua sumbu penilaian','Setiap variabel dinilai pada dua dimensi secara independen: <strong>Probabilitas (P)</strong> — seberapa mungkin risiko terjadi, dan <strong>Dampak/Impact (I)</strong> — seberapa besar dampak jika terjadi. Kedua dimensi menggunakan skala 1–5.','#EFF6FF'],
-        ['2','Cara membaca skala','<strong>1 = Rendah</strong> hingga <strong>5 = Sangat Tinggi</strong>. Skor akhir dihitung otomatis: P × I. Hasil 1–5 = Rendah · 6–11 = Sedang · 12–19 = Tinggi · 20–25 = Sangat Tinggi.','#F0FDF4'],
-        ['3','Klik tombol skor','Pada setiap variabel, pilih satu tombol untuk P dan satu untuk I. Skor dan level risiko langsung muncul setelah kedua nilai dipilih. Kolom catatan/justifikasi tersedia untuk mendokumentasikan dasar penilaian.','#FFFBEB'],
-        ['4','Navigasi halaman','Gunakan tombol Berikutnya/Sebelumnya atau klik langsung pada tab di atas. Halaman terakhir menampilkan rekap lengkap semua 37 variabel dengan opsi unduh CSV.','#FFF1F2'],
-        ['💡','Dasar penilaian','Gunakan pengetahuan teknis Anda, data operasional lapangan, dan pengalaman proyek sebagai dasar penilaian. Tidak ada jawaban yang benar atau salah — penilaian ini bertujuan mengangkap perspektif ahli dari dalam PLN.','#F0F9FF'],
-      ].map(([n,t,d,bg])=>`
-      <div style="display:flex;gap:9px;padding:11px 13px;border-radius:8px;background:${bg}">
-        <div style="font-size:1rem;flex-shrink:0">${n}</div>
-        <div><div style="font-weight:700;font-size:.8rem;margin-bottom:3px">${t}</div><div style="font-size:.71rem;color:var(--slate);line-height:1.5">${d}</div></div>
-      </div>`).join('')}
+    <div class="card-hdr">
+      <h2>Data Diri Penilai</h2>
+      <p>Isi data diri untuk identifikasi dan rekam jejak penilaian. Nama Lengkap wajib diisi.</p>
+    </div>
+    <div class="card-body">
+      <div class="fg">
+        <div class="field"><label>Nama Lengkap <span style="color:#EF4444">*</span></label><input id="f-nama" type="text" placeholder="Nama lengkap Anda" oninput="syncId()"></div>
+        <div class="field"><label>Divisi / Unit Kerja</label><input id="f-div" type="text" placeholder="mis. UP3 Jawa Timur / MRS Pusat" oninput="syncId()"></div>
+        <div class="field"><label>Jabatan / Spesialisasi</label><input id="f-jab" type="text" placeholder="mis. Manajer Perencanaan EBT" oninput="syncId()"></div>
+        <div class="field"><label>Tanggal Pengisian</label><input id="f-tgl" type="date" oninput="syncId()"></div>
+        <div class="field"><label>Email Dinas</label><input id="f-email" type="email" placeholder="nama@pln.co.id" oninput="syncId()"></div>
+      </div>
     </div>
   </div>
-  ${navBar(idx)}`;
+
+  <div class="card">
+    <div class="card-hdr">
+      <h2>Pilih Dimensi yang Akan Dinilai</h2>
+      <p>Pilih satu atau lebih dimensi. Hanya halaman dimensi yang dipilih yang akan muncul.</p>
+    </div>
+    <div class="card-body">
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+        <button class="btn-nav btn-next" style="font-size:.72rem;padding:6px 14px" onclick="selectAllDims()">✓ Pilih Semua</button>
+        <button class="btn-nav btn-back" style="font-size:.72rem;padding:6px 14px" onclick="clearAllDims()">✕ Hapus Semua</button>
+        <span id="dim-count-lbl" style="font-size:.75rem;color:var(--slate);font-weight:600;margin-left:4px"></span>
+      </div>
+      <div class="dim-pick-grid">${dimCards}</div>
+      <div id="opener-warn" style="display:none;margin-top:12px;padding:9px 12px;background:#FEE2E2;border-radius:8px;font-size:.75rem;color:#B91C1C;font-weight:600">
+        ⚠ Harap isi Nama Lengkap dan pilih minimal satu dimensi untuk melanjutkan.
+      </div>
+    </div>
+    <div class="nav-bar" style="border-top:1px solid var(--border)">
+      <div style="font-size:.72rem;color:var(--slate)">Langkah 1 dari beberapa</div>
+      <span id="opener-dim-summary" style="font-size:.72rem;color:var(--slate);flex:1;text-align:center"></span>
+      <button class="btn-nav btn-next" onclick="startKuesioner()">Mulai Penilaian →</button>
+    </div>
+  </div>`;
 }
 
-/* ── Dimension page ── */
+/* ═══════════════════ OPENER INTERACTIONS ══════════════════ */
+function toggleDim(id) {
+  if(selectedDims.has(id)) selectedDims.delete(id);
+  else selectedDims.add(id);
+  document.getElementById('dpc-'+id).classList.toggle('selected', selectedDims.has(id));
+  updateDimCountLabel();
+}
+function selectAllDims() {
+  DIMS.forEach(d=>{ selectedDims.add(d.id); document.getElementById('dpc-'+d.id).classList.add('selected'); });
+  updateDimCountLabel();
+}
+function clearAllDims() {
+  DIMS.forEach(d=>{ selectedDims.delete(d.id); document.getElementById('dpc-'+d.id).classList.remove('selected'); });
+  updateDimCountLabel();
+}
+function updateDimCountLabel() {
+  const n=selectedDims.size;
+  const lbl=document.getElementById('dim-count-lbl');
+  if(lbl) lbl.textContent = n ? `${n} dimensi dipilih` : 'Belum ada dimensi dipilih';
+  const sum=document.getElementById('opener-dim-summary');
+  if(sum) {
+    const names=DIMS.filter(d=>selectedDims.has(d.id)).map(d=>d.short);
+    sum.textContent = names.length ? `Dimensi: ${names.join(', ')}` : '';
+  }
+}
+function startKuesioner() {
+  syncId();
+  const nama=(document.getElementById('f-nama')?.value||'').trim();
+  if(!nama || selectedDims.size===0) {
+    document.getElementById('opener-warn').style.display='block';
+    return;
+  }
+  document.getElementById('opener-warn').style.display='none';
+  buildDynamicPages();
+}
+
+/* ═══════════════════ DYNAMIC PAGE BUILDER ══════════════════ */
+function buildDynamicPages() {
+  // Clear old dynamic panels & step buttons (keep opener)
+  document.querySelectorAll('.panel:not(#panel-open)').forEach(el=>el.remove());
+  document.querySelectorAll('.step-btn:not(#sbtn-open)').forEach(el=>el.remove());
+
+  // Mark opener step done
+  const obtn=document.getElementById('sbtn-open');
+  obtn.classList.remove('active');
+  obtn.classList.add('done');
+
+  // Build PAGES from selected dims
+  PAGES=[];
+  DIMS.filter(d=>selectedDims.has(d.id)).forEach(d=>PAGES.push({id:d.id,short:d.short,type:'dim',dim:d}));
+  PAGES.push({id:'hasil',short:'Hasil',type:'summary'});
+
+  const stepsEl=document.getElementById('steps-inner');
+  const panelsEl=document.getElementById('panels-wrap');
+
+  PAGES.forEach((pg,idx)=>{
+    const btn=document.createElement('button');
+    btn.className='step-btn';
+    btn.id='sbtn-'+idx;
+    btn.onclick=()=>goTo(idx);
+    btn.innerHTML=`<span class="step-dot" id="sdot-${idx}">${idx+2}</span>${pg.short}`;
+    stepsEl.appendChild(btn);
+
+    const panel=document.createElement('div');
+    panel.className='panel';
+    panel.id='panel-'+idx;
+    panel.innerHTML = pg.type==='dim' ? buildDim(pg.dim,idx) : buildSummary(idx);
+    panelsEl.appendChild(panel);
+  });
+
+  const tgl=document.getElementById('f-tgl');
+  if(tgl && !tgl.value) tgl.valueAsDate=new Date();
+  syncId();
+  updateGlobalProgress();
+  goTo(0);
+  showToast(`${selectedDims.size} dimensi siap dinilai 👍`);
+}
+
+/* ═══════════════════ DIMENSION PAGE ══════════════════ */
 function buildDim(dim, idx) {
-  const clr = {met:'#C2410C',env:'#15803D',soc:'#6D28D9',gov:'#2563EB'}[dim.cls];
-
-  const guideP = P_LABELS.map((l,i)=>`
-    <div class="guide-cell">
-      <span class="guide-num">${i+1}</span>
-      <span class="guide-lbl">${l}</span>
-    </div>`).join('');
-
-  const guideI = I_LABELS.map((l,i)=>`
-    <div class="guide-cell">
-      <span class="guide-num">${i+1}</span>
-      <span class="guide-lbl">${l}</span>
-    </div>`).join('');
-
-  const items = dim.items.map((item) => {
-    const klass = dim.cls;
-    const btnsP = [1,2,3,4,5].map(n=>`
-      <button class="rb" id="p${item.code}-${n}" onclick="setScore('${item.code}','P',${n})"
-        title="${P_HINTS[n-1]}">${n}</button>`).join('');
-    const btnsI = [1,2,3,4,5].map(n=>`
-      <button class="rb" id="i${item.code}-${n}" onclick="setScore('${item.code}','I',${n})"
-        title="${I_HINTS[n-1]}">${n}</button>`).join('');
-
+  const guideP=P_LABELS.map((l,i)=>`<div class="guide-cell"><span class="guide-num">${i+1}</span><span class="guide-lbl">${l}</span></div>`).join('');
+  const guideI=I_LABELS.map((l,i)=>`<div class="guide-cell"><span class="guide-num">${i+1}</span><span class="guide-lbl">${l}</span></div>`).join('');
+  const items=dim.items.map(item=>{
+    const btnsP=[1,2,3,4,5].map(n=>`<button class="rb" id="p${item.code}-${n}" onclick="setScore('${item.code}','P',${n})" title="${P_HINTS[n-1]}">${n}</button>`).join('');
+    const btnsI=[1,2,3,4,5].map(n=>`<button class="rb" id="i${item.code}-${n}" onclick="setScore('${item.code}','I',${n})" title="${I_HINTS[n-1]}">${n}</button>`).join('');
     return `
     <div class="risk-item" id="ri-${item.code}">
       <div class="ri-top">
-        <span class="ri-code ${klass}">${item.code}</span>
+        <span class="ri-code ${dim.cls}">${item.code}</span>
         <span class="ri-name">${item.name}</span>
         <span class="ri-toggle" onclick="toggleDesc('${item.code}')">+ keterangan</span>
       </div>
@@ -517,10 +655,7 @@ function buildDim(dim, idx) {
   <div class="card">
     <div class="dim-hdr">
       <div class="dim-icon ${dim.cls}">${dim.icon}</div>
-      <div class="dim-text">
-        <h3>${dim.label}</h3>
-        <p>${dim.desc}</p>
-      </div>
+      <div class="dim-text"><h3>${dim.label}</h3><p>${dim.desc}</p></div>
       <div class="dim-count" id="dc-${dim.id}">0 / ${dim.items.length}</div>
     </div>
     <div class="sec-prog">
@@ -538,13 +673,13 @@ function buildDim(dim, idx) {
   </div>`;
 }
 
-/* ── Summary page ── */
+/* ═══════════════════ SUMMARY PAGE ══════════════════ */
 function buildSummary(idx) {
   return `
   <div class="card">
     <div class="card-hdr">
       <h2>Rekap Hasil Penilaian Materialitas Risiko ESG</h2>
-      <p>Ringkasan semua 37 variabel risiko. Periksa kelengkapan dan konsistensi penilaian sebelum mengunduh.</p>
+      <p>Ringkasan semua variabel risiko dari dimensi yang dipilih. Periksa kelengkapan sebelum mengunduh.</p>
     </div>
     <div class="card-body">
       <div class="sum-stats">
@@ -569,253 +704,372 @@ function buildSummary(idx) {
         </table>
       </div>
       <div class="export-row">
-        <button class="btn-nav btn-export" onclick="exportCSV()">⬇ Unduh CSV</button>
-        <button class="btn-nav btn-export" onclick="exportJSON()" style="background:#374151">⬇ Unduh JSON</button>
+        <button class="btn-drive" id="btn-drive" onclick="openDriveModal()">
+          <svg width="16" height="16" viewBox="0 0 87.3 78" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3L27.5 53H0c0 1.55.4 3.1 1.2 4.5L6.6 66.85z" fill="#0066DA"/><path d="M43.65 25L29.9 1.2C28.55.4 27 0 25.45 0c-1.55 0-3.1.4-4.5 1.2L6.6 11.15c-1.35.8-2.5 1.95-3.3 3.3L16.1 37.5h27.5V25z" fill="#00AC47"/><path d="M73.55 76.8c1.35-.8 2.5-1.95 3.3-3.3l1.6-2.75L86.1 57.5c.8-1.4 1.2-2.95 1.2-4.5H59.8L73.55 76.8z" fill="#EA4335"/><path d="M43.65 25v28.5H71.2L57.2 14.45c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25z" fill="#00832D"/><path d="M0 53.5c0 1.55.4 3.1 1.2 4.5l3.85 6.65 9.6 9.95c1.35.8 2.9 1.2 4.45 1.2H27.5L43.65 53.5H0z" fill="#2684FC"/><path d="M43.65 25H16.1l9.35-23.8c1.35-.8 2.9-1.2 4.45-1.2 1.55 0 3.1.4 4.5 1.2l9.25 23.8z" fill="#00AC47"/></svg>
+          Kirim ke Google Drive
+        </button>
         <button class="btn-nav btn-next" onclick="printPage()">🖨 Cetak / PDF</button>
       </div>
     </div>
-    ${navBar(idx, true)}
+    ${navBar(idx)}
   </div>`;
 }
 
-function navBar(idx, isLast=false) {
-  const isFirst = idx === 0;
-  const isSum   = idx === PAGES.length - 1;
+function navBar(idx) {
+  const isFirst=(idx===0);
+  const isLast=(idx===PAGES.length-1);
+  const backAction=isFirst ? 'goToOpener()' : `goTo(${idx-1})`;
   return `
   <div class="nav-bar">
-    <button class="btn-nav btn-back" onclick="goTo(${idx-1})" ${isFirst?'disabled':''}>← Sebelumnya</button>
+    <button class="btn-nav btn-back" onclick="${backAction}">← Sebelumnya</button>
     <div class="nav-info" id="nav-info-${idx}"></div>
-    ${isSum
+    ${isLast
       ? `<button class="btn-nav btn-next" onclick="scrollTo({top:0,behavior:'smooth'})">↑ Ke atas</button>`
       : `<button class="btn-nav btn-next" onclick="goTo(${idx+1})">Berikutnya →</button>`}
   </div>`;
 }
 
-/* ══════════════════════════════════════════════════════
-   INTERACTIONS
-══════════════════════════════════════════════════════ */
-function syncId() {
-  state.identity = {
-    nama:   document.getElementById('f-nama')?.value  || '',
-    div:    document.getElementById('f-div')?.value   || '',
-    jab:    document.getElementById('f-jab')?.value   || '',
-    tgl:    document.getElementById('f-tgl')?.value   || '',
-    email:  document.getElementById('f-email')?.value || '',
-    lokasi: document.getElementById('f-lokasi')?.value|| '',
-  };
+/* ═══════════════════ NAVIGATION ══════════════════ */
+function goToOpener() {
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.step-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-open').classList.add('active');
+  document.getElementById('sbtn-open').classList.add('active');
+  currentPage=-1;
+  window.scrollTo({top:0,behavior:'smooth'});
 }
 
+function goTo(idx) {
+  if(idx<0||idx>=PAGES.length) return;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.step-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('panel-'+idx).classList.add('active');
+  document.getElementById('sbtn-'+idx).classList.add('active');
+  currentPage=idx;
+  if(PAGES[idx].type==='summary') refreshSummary();
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateNavInfo(idx);
+}
+
+function updateNavInfo(idx) {
+  const el=document.getElementById('nav-info-'+idx);
+  if(el){ const done=countAnswered(),total=totalItems(); el.textContent=`${done} dari ${total} variabel telah dinilai`; }
+}
+
+/* ═══════════════════ SCORE INTERACTIONS ══════════════════ */
 function toggleDesc(code) {
-  const el = document.getElementById('desc-' + code);
-  const tog = el.previousElementSibling;
-  const open = el.classList.toggle('open');
-  tog.textContent = open ? '− sembunyikan' : '+ keterangan';
+  const el=document.getElementById('desc-'+code);
+  const open=el.classList.toggle('open');
+  el.previousElementSibling.textContent=open?'− sembunyikan':'+ keterangan';
 }
 
-function setScore(code, dim, val) {
-  state.scores[code][dim] = val;
-  // Update buttons
-  const prefix = dim === 'P' ? 'p' : 'i';
-  [1,2,3,4,5].forEach(n => {
-    const btn = document.getElementById(`${prefix}${code}-${n}`);
+function setScore(code,dim,val) {
+  state.scores[code][dim]=val;
+  const prefix=dim==='P'?'p':'i';
+  [1,2,3,4,5].forEach(n=>{
+    const btn=document.getElementById(`${prefix}${code}-${n}`);
     if(!btn) return;
-    btn.className = 'rb';
-    if(n === val) btn.classList.add('s'+n);
+    btn.className='rb';
+    if(n===val) btn.classList.add('s'+n);
   });
-  // Update hint
-  const hintEl = document.getElementById((dim==='P'?'ph-':'ih-') + code);
-  if(hintEl) hintEl.textContent = dim==='P' ? P_HINTS[val-1] : I_HINTS[val-1];
-  // Update badge
+  const hintEl=document.getElementById((dim==='P'?'ph-':'ih-')+code);
+  if(hintEl) hintEl.textContent=dim==='P'?P_HINTS[val-1]:I_HINTS[val-1];
   updateBadge(code);
-  // Update item state
-  const item = document.getElementById('ri-' + code);
-  const sc = state.scores[code];
-  if(item) item.classList.toggle('answered', !!(sc.P && sc.I));
-  // Update section progress
-  const dimId = code.split('-')[0];
-  updateDimProgress(dimId);
+  const item=document.getElementById('ri-'+code);
+  const sc=state.scores[code];
+  if(item) item.classList.toggle('answered',!!(sc.P&&sc.I));
+  updateDimProgress(code.split('-')[0]);
   updateGlobalProgress();
 }
 
 function updateBadge(code) {
-  const sc = state.scores[code];
-  const el = document.getElementById('res-' + code);
+  const sc=state.scores[code];
+  const el=document.getElementById('res-'+code);
   if(!el) return;
-  if(sc.P && sc.I) {
-    const total = sc.P * sc.I;
-    const lv = scoreLevel(total);
-    el.innerHTML = `<span class="skor-badge ${lv.badgeCls}">Skor: <strong>${total}</strong> — ${lv.lbl}</span>`;
-  } else {
-    el.innerHTML = '';
-  }
+  if(sc.P&&sc.I){
+    const total=sc.P*sc.I;
+    const lv=scoreLevel(total);
+    el.innerHTML=`<span class="skor-badge ${lv.badgeCls}">Skor: <strong>${total}</strong> — ${lv.lbl}</span>`;
+  } else { el.innerHTML=''; }
 }
 
 function updateDimProgress(dimId) {
-  const dim = DIMS.find(d=>d.id===dimId);
+  const dim=DIMS.find(d=>d.id===dimId);
   if(!dim) return;
-  const done = dimAnswered(dimId);
-  const total = dim.items.length;
-  const pct = Math.round(done/total*100);
-  const barEl = document.getElementById('spb-' + dimId);
-  const txtEl = document.getElementById('spt-' + dimId);
-  const cntEl = document.getElementById('dc-' + dimId);
-  if(barEl) barEl.style.width = pct + '%';
-  if(txtEl) txtEl.textContent = done === total ? `✓ Semua ${total} variabel dinilai` : `${done} dari ${total} variabel dinilai`;
-  if(cntEl) cntEl.textContent = `${done} / ${total}`;
-  // Update step dot
-  const pageIdx = PAGES.findIndex(p=>p.id===dimId);
-  const dot = document.getElementById('sdot-' + pageIdx);
-  const btn = document.getElementById('sbtn-' + pageIdx);
-  if(dot && btn) {
-    if(done === total) { btn.classList.add('done'); btn.classList.remove('partial'); }
-    else if(done > 0)  { btn.classList.add('partial'); btn.classList.remove('done'); }
-    else               { btn.classList.remove('done','partial'); }
+  const done=dimAnswered(dimId),total=dim.items.length;
+  const pct=Math.round(done/total*100);
+  const bar=document.getElementById('spb-'+dimId);
+  const txt=document.getElementById('spt-'+dimId);
+  const cnt=document.getElementById('dc-'+dimId);
+  if(bar) bar.style.width=pct+'%';
+  if(txt) txt.textContent=done===total?`✓ Semua ${total} variabel dinilai`:`${done} dari ${total} variabel dinilai`;
+  if(cnt) cnt.textContent=`${done} / ${total}`;
+  const pageIdx=PAGES.findIndex(p=>p.id===dimId);
+  if(pageIdx<0) return;
+  const dot=document.getElementById('sdot-'+pageIdx);
+  const btn=document.getElementById('sbtn-'+pageIdx);
+  if(btn){
+    if(done===total){btn.classList.add('done');btn.classList.remove('partial');}
+    else if(done>0){btn.classList.add('partial');btn.classList.remove('done');}
+    else{btn.classList.remove('done','partial');}
   }
 }
 
+/* ═══════════════════ SUMMARY REFRESH ══════════════════ */
 function refreshSummary() {
-  const tbody = document.getElementById('sum-tbody');
+  const tbody=document.getElementById('sum-tbody');
   if(!tbody) return;
-  tbody.innerHTML = '';
-  let st=0, t=0, s=0, r=0;
-
-  DIMS.forEach(dim => {
-    const sepRow = document.createElement('tr');
-    sepRow.className = 'dim-sep';
-    sepRow.innerHTML = `<td colspan="7">${dim.icon} ${dim.label}</td>`;
-    tbody.appendChild(sepRow);
-
-    dim.items.forEach(item => {
-      const sc = state.scores[item.code];
-      const p = sc.P || '—';
-      const i = sc.I || '—';
-      const total = (sc.P && sc.I) ? sc.P * sc.I : null;
-      const lv = total ? scoreLevel(total) : null;
-      if(lv) {
-        if(lv.cls==='lv-st') st++;
-        else if(lv.cls==='lv-t') t++;
-        else if(lv.cls==='lv-s') s++;
-        else r++;
-      }
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
+  tbody.innerHTML='';
+  let st=0,t=0,s=0,r=0;
+  DIMS.filter(d=>selectedDims.has(d.id)).forEach(dim=>{
+    const sep=document.createElement('tr');
+    sep.className='dim-sep';
+    sep.innerHTML=`<td colspan="7">${dim.icon} ${dim.label}</td>`;
+    tbody.appendChild(sep);
+    dim.items.forEach(item=>{
+      const sc=state.scores[item.code];
+      const p=sc.P||'—',i=sc.I||'—';
+      const total=(sc.P&&sc.I)?sc.P*sc.I:null;
+      const lv=total?scoreLevel(total):null;
+      if(lv){if(lv.cls==='lv-st')st++;else if(lv.cls==='lv-t')t++;else if(lv.cls==='lv-s')s++;else r++;}
+      const tr=document.createElement('tr');
+      tr.innerHTML=`
         <td><span class="badge-code ${dim.cls}">${item.code}</span></td>
         <td style="font-size:.75rem">${item.name}</td>
         <td style="text-align:center;font-weight:700">${p}</td>
         <td style="text-align:center;font-weight:700">${i}</td>
         <td style="text-align:center;font-weight:800;font-size:.85rem">${total||'—'}</td>
-        <td>${lv ? `<span class="badge-lv ${lv.cls}">${lv.lbl}</span>` : '<span class="badge-lv lv-na">Belum dinilai</span>'}</td>
+        <td>${lv?`<span class="badge-lv ${lv.cls}">${lv.lbl}</span>`:'<span class="badge-lv lv-na">Belum dinilai</span>'}</td>
         <td style="font-size:.7rem;color:var(--slate)">${sc.note||'—'}</td>`;
       tbody.appendChild(tr);
     });
   });
-
-  document.getElementById('ss-st').textContent = st;
-  document.getElementById('ss-t').textContent  = t;
-  document.getElementById('ss-s').textContent  = s;
-  document.getElementById('ss-r').textContent  = r;
-
-  const meta = document.getElementById('sum-meta');
-  const id = state.identity;
-  meta.textContent = [
-    id.nama   ? `Penilai: ${id.nama}` : '',
-    id.div    ? `Unit: ${id.div}` : '',
-    id.lokasi ? `Waduk: ${id.lokasi}` : '',
-    id.tgl    ? `Tanggal: ${id.tgl}` : '',
-  ].filter(Boolean).join('  ·  ') || 'Data diri belum diisi.';
-
+  document.getElementById('ss-st').textContent=st;
+  document.getElementById('ss-t').textContent=t;
+  document.getElementById('ss-s').textContent=s;
+  document.getElementById('ss-r').textContent=r;
+  const id=state.identity;
+  const dimNames=DIMS.filter(d=>selectedDims.has(d.id)).map(d=>d.short).join(', ');
+  document.getElementById('sum-meta').textContent=[
+    id.nama?`Penilai: ${id.nama}`:'',
+    id.div?`Unit: ${id.div}`:'',
+    id.tgl?`Tanggal: ${id.tgl}`:'',
+    dimNames?`Dimensi: ${dimNames}`:'',
+  ].filter(Boolean).join('  ·  ')||'Data diri belum diisi.';
   updateGlobalProgress();
 }
 
-/* ══════════════════════════════════════════════════════
-   NAVIGATION
-══════════════════════════════════════════════════════ */
-function goTo(idx) {
-  if(idx < 0 || idx >= PAGES.length) return;
-  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.step-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('panel-' + idx).classList.add('active');
-  document.getElementById('sbtn-' + idx).classList.add('active');
-  currentPage = idx;
-  if(PAGES[idx].type === 'summary') refreshSummary();
-  window.scrollTo({top:0, behavior:'smooth'});
-  updateNavInfo(idx);
+/* ═══════════════════ GOOGLE DRIVE ══════════════════ */
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbza6ffgTMoOXU12Tg3Tth-nFwpzzyJYHJgaDUzLyXqFoSK_MrC9bV3YW5eEYs5Uj4Pc9w/exec';
+
+function openDriveModal() {
+  const modal=document.getElementById('drive-modal');
+  modal.classList.add('open');
+  const ss=document.getElementById('drive-send-status');
+  ss.className='drive-status'; ss.style.display='none';
+  syncId();
+  const id=state.identity;
+  const prev=document.getElementById('modal-identity-preview');
+  if(prev){
+    const dimNames=DIMS.filter(d=>selectedDims.has(d.id)).map(d=>d.short).join(', ')||'—';
+    prev.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px">
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Nama</span><div style="font-weight:600;color:#111827;margin-top:2px">${id.nama||'—'}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Divisi</span><div style="font-weight:600;color:#111827;margin-top:2px">${id.div||'—'}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Jabatan</span><div style="font-weight:600;color:#111827;margin-top:2px">${id.jab||'—'}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Tanggal</span><div style="font-weight:600;color:#111827;margin-top:2px">${id.tgl||'—'}</div></div>
+      <div style="grid-column:1/-1"><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Dimensi Dinilai</span><div style="font-weight:600;color:#111827;margin-top:2px">${dimNames}</div></div>
+    </div>`;
+  }
+  const btn=document.getElementById('btn-do-send');
+  if(btn){btn.disabled=false;btn.classList.remove('loading');btn.innerHTML=driveIconBtn('Kirim');}
 }
 
-function updateNavInfo(idx) {
-  const el = document.getElementById('nav-info-' + idx);
-  if(el) {
-    const done = countAnswered(), total = totalItems();
-    el.textContent = `${done} dari ${total} variabel telah dinilai`;
+function closeDriveModal() {
+  document.getElementById('drive-modal').classList.remove('open');
+}
+
+function driveIconBtn(label) {
+  return `<svg width="16" height="16" viewBox="0 0 87.3 78" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3L27.5 53H0c0 1.55.4 3.1 1.2 4.5L6.6 66.85z" fill="#0066DA"/><path d="M43.65 25L29.9 1.2C28.55.4 27 0 25.45 0c-1.55 0-3.1.4-4.5 1.2L6.6 11.15c-1.35.8-2.5 1.95-3.3 3.3L16.1 37.5h27.5V25z" fill="#00AC47"/><path d="M73.55 76.8c1.35-.8 2.5-1.95 3.3-3.3l1.6-2.75L86.1 57.5c.8-1.4 1.2-2.95 1.2-4.5H59.8L73.55 76.8z" fill="#EA4335"/><path d="M43.65 25v28.5H71.2L57.2 14.45c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25z" fill="#00832D"/><path d="M0 53.5c0 1.55.4 3.1 1.2 4.5l3.85 6.65 9.6 9.95c1.35.8 2.9 1.2 4.45 1.2H27.5L43.65 53.5H0z" fill="#2684FC"/><path d="M43.65 25H16.1l9.35-23.8c1.35-.8 2.9-1.2 4.45-1.2 1.55 0 3.1.4 4.5 1.2l9.25 23.8z" fill="#00AC47"/></svg> ${label}`;
+}
+
+async function sendToDrive() {
+  const btn=document.getElementById('btn-do-send');
+  const st=document.getElementById('drive-send-status');
+  btn.disabled=true; btn.classList.add('loading');
+  btn.innerHTML='<span class="spin"></span> Membuat PDF & mengirim...';
+  st.className='drive-status sending';
+  st.innerHTML='<span class="spin"></span><span>Membuat PDF, harap tunggu...</span>';
+  st.style.display='flex';
+  try {
+    const base64pdf = await generatePDFBase64();
+    syncId();
+    const id=state.identity;
+    const nama=(id.nama||'Responden').replace(/\s+/g,'_');
+    const tgl=id.tgl||new Date().toISOString().slice(0,10);
+    const filename=`ESG_PLTS_${nama}_${tgl}.pdf`;
+    st.innerHTML='<span class="spin"></span><span>Mengirim ke Google Drive...</span>';
+    const resp=await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      body:JSON.stringify({pdf:base64pdf,filename}),
+      headers:{'Content-Type':'text/plain'},
+    });
+    const json=await resp.json();
+    if(json.ok){
+      st.className='drive-status ok';
+      st.innerHTML=`<span>✓</span><span>File <b>${filename}</b> berhasil dikirim ke Google Drive!</span>`;
+      showToast('PDF berhasil dikirim ke Google Drive ✓');
+    } else { throw new Error(json.error||'Apps Script mengembalikan error'); }
+  } catch(err) {
+    st.className='drive-status err';
+    st.innerHTML=`<span>✗</span><span>Gagal mengirim: ${err.message}. Pastikan URL Apps Script benar dan deployment aktif.</span>`;
+    showToast('Gagal kirim ke Drive — cek status di modal');
+  } finally {
+    btn.disabled=false; btn.classList.remove('loading');
+    btn.innerHTML=driveIconBtn('Kirim');
   }
 }
 
-/* ══════════════════════════════════════════════════════
-   EXPORT
-══════════════════════════════════════════════════════ */
-function exportCSV() {
-  syncId();
-  const id = state.identity;
-  let csv = `Kuesioner Materialitas Risiko ESG — PLTS Terapung · PLN\n`;
-  csv += `Penilai,${id.nama||''}\nDivisi,${id.div||''}\nJabatan,${id.jab||''}\nLokasi Waduk,${id.lokasi||''}\nTanggal,${id.tgl||''}\nEmail,${id.email||''}\n\n`;
-  csv += `Kode,Variabel Risiko,Dimensi,Probabilitas (P),Dampak (I),Skor (P×I),Level Risiko,Catatan Penilai\n`;
-  DIMS.forEach(dim => {
-    dim.items.forEach(item => {
-      const sc = state.scores[item.code];
-      const p = sc.P || '';
-      const i = sc.I || '';
-      const total = (sc.P && sc.I) ? sc.P * sc.I : '';
-      const lv = total ? scoreLevel(total).lbl : '';
-      const note = (sc.note || '').replace(/,/g,' ').replace(/\n/g,' ').replace(/"/g,"'");
-      csv += `${item.code},"${item.name}","${dim.label}",${p},${i},${total},${lv},"${note}"\n`;
-    });
+function generatePDFBase64() {
+  return new Promise((resolve,reject)=>{
+    try {
+      const {jsPDF}=window.jspdf;
+      const doc=buildPDFDoc(jsPDF);
+      resolve(doc.output('datauristring').split(',')[1]);
+    } catch(err){ reject(err); }
   });
-  download(csv, `Kuesioner_ESG_PLTS_${id.lokasi||'Waduk'}_${id.tgl||new Date().toISOString().slice(0,10)}.csv`, 'text/csv;charset=utf-8;');
 }
 
-function exportJSON() {
-  syncId();
-  const out = {
-    metadata: { ...state.identity, exportedAt: new Date().toISOString() },
-    scores: {}
-  };
-  DIMS.forEach(dim => {
-    dim.items.forEach(item => {
-      const sc = state.scores[item.code];
-      const total = (sc.P && sc.I) ? sc.P * sc.I : null;
-      out.scores[item.code] = {
-        name: item.name, dimensi: dim.label,
-        P: sc.P, I: sc.I, skor: total,
-        level: total ? scoreLevel(total).lbl : null,
-        catatan: sc.note
-      };
-    });
-  });
-  download(JSON.stringify(out, null, 2), `Kuesioner_ESG_PLTS_${state.identity.tgl||'2024'}.json`, 'application/json');
-}
+function buildPDFDoc(jsPDF) {
+  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+  const W=doc.internal.pageSize.getWidth();
+  const id=state.identity;
+  const activeDims=DIMS.filter(d=>selectedDims.has(d.id));
+  let y=15;
 
-function download(content, filename, mime) {
-  const blob = new Blob([content], {type: mime});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
-  URL.revokeObjectURL(url);
+  // Header
+  doc.setFillColor(15,39,68);
+  doc.rect(0,0,W,28,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(13); doc.setFont('helvetica','bold');
+  doc.text('Kuesioner Materialitas Risiko ESG — PLTS Terapung',W/2,11,{align:'center'});
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text('PLN · Penilaian Umum Nasional',W/2,18,{align:'center'});
+  y=36;
+
+  // Identity block
+  doc.setTextColor(30,30,30);
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  const fields=[
+    ['Penilai',id.nama||'—'],['Divisi',id.div||'—'],
+    ['Jabatan',id.jab||'—'],['Tanggal',id.tgl||'—'],
+    ['Email',id.email||'—'],
+    ['Dimensi Dinilai',activeDims.map(d=>d.short).join(', ')||'—'],
+  ];
+  fields.forEach(([k,v],i)=>{
+    const col=i%2===0?14:W/2+2;
+    if(i%2===0 && i>0) y+=8;
+    doc.setFont('helvetica','bold'); doc.text(k+': ',col,y);
+    doc.setFont('helvetica','normal'); doc.text(v,col+doc.getTextWidth(k+': '),y);
+  });
+  y+=14;
+
+  // Table per dim
+  activeDims.forEach(dim=>{
+    // Dim header
+    if(y>265){ doc.addPage(); y=15; }
+    doc.setFillColor(15,39,68);
+    doc.rect(14,y-5,W-28,9,'F');
+    doc.setTextColor(255,255,255);
+    doc.setFontSize(8.5); doc.setFont('helvetica','bold');
+    doc.text(`${dim.icon} ${dim.label}`,16,y);
+    y+=8;
+
+    // Column headers
+    doc.setFillColor(240,244,248);
+    doc.rect(14,y-5,W-28,8,'F');
+    doc.setTextColor(80,80,80);
+    doc.setFontSize(7); doc.setFont('helvetica','bold');
+    doc.text('Kode',16,y);
+    doc.text('Variabel Risiko',30,y);
+    doc.text('P',W-42,y,{align:'center'});
+    doc.text('I',W-32,y,{align:'center'});
+    doc.text('P×I',W-22,y,{align:'center'});
+    doc.text('Level',W-14,y,{align:'right'});
+    y+=7;
+
+    dim.items.forEach((item,idx)=>{
+      if(y>272){ doc.addPage(); y=15; }
+      const sc=state.scores[item.code];
+      const total=(sc.P&&sc.I)?sc.P*sc.I:null;
+      const lv=total?scoreLevel(total):null;
+      if(idx%2===0){ doc.setFillColor(248,250,253); doc.rect(14,y-4,W-28,7,'F'); }
+      doc.setTextColor(30,30,30);
+      doc.setFontSize(7); doc.setFont('helvetica','bold');
+      doc.text(item.code,16,y);
+      doc.setFont('helvetica','normal');
+      const nameLines=doc.splitTextToSize(item.name,W-28-32);
+      doc.text(nameLines[0],30,y);
+      doc.text(sc.P?String(sc.P):'—',W-42,y,{align:'center'});
+      doc.text(sc.I?String(sc.I):'—',W-32,y,{align:'center'});
+      doc.text(total?String(total):'—',W-22,y,{align:'center'});
+      doc.setFont('helvetica','bold');
+      doc.setTextColor(lv?.cls==='lv-st'?[185,28,28]:lv?.cls==='lv-t'?[194,65,12]:lv?.cls==='lv-s'?[133,77,14]:[21,128,61]);
+      doc.text(lv?lv.lbl:'Belum',W-14,y,{align:'right'});
+      doc.setTextColor(30,30,30);
+      if(sc.note){
+        y+=5;
+        doc.setFont('helvetica','italic'); doc.setFontSize(6.5);
+        const noteLines=doc.splitTextToSize('Catatan: '+sc.note,W-34);
+        doc.text(noteLines[0],30,y);
+      }
+      y+=7;
+    });
+    y+=4;
+  });
+
+  // Footer
+  doc.setTextColor(150,150,150); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text(`Digenerate: ${new Date().toLocaleString('id-ID')}`,W/2,doc.internal.pageSize.getHeight()-8,{align:'center'});
+  return doc;
 }
 
 function printPage() { window.print(); }
 
-/* ══════════════════════════════════════════════════════
-   INIT
-══════════════════════════════════════════════════════ */
-(function init() {
-  document.getElementById('panel-0').classList.add('active');
-  document.getElementById('sbtn-0').classList.add('active');
-  // Set today's date default
-  const tgl = document.getElementById('f-tgl');
-  if(tgl) tgl.valueAsDate = new Date();
+/* ═══════════════════ INIT ══════════════════ */
+window.addEventListener('DOMContentLoaded', function() {
+  // Build opener panel
+  const stepsEl=document.getElementById('steps-inner');
+  const panelsEl=document.getElementById('panels-wrap');
+
+  const btn=document.createElement('button');
+  btn.className='step-btn active';
+  btn.id='sbtn-open';
+  btn.onclick=()=>goToOpener();
+  btn.innerHTML=`<span class="step-dot" style="background:var(--mgold);color:#fff">1</span>Mulai`;
+  stepsEl.appendChild(btn);
+
+  const panel=document.createElement('div');
+  panel.className='panel active';
+  panel.id='panel-open';
+  panel.innerHTML=buildOpenerHTML();
+  panelsEl.appendChild(panel);
+
+  // Set today's date
+  const tgl=document.getElementById('f-tgl');
+  if(tgl) tgl.valueAsDate=new Date();
+
+  // Modal close on backdrop click
+  document.getElementById('drive-modal').addEventListener('click',function(e){
+    if(e.target===this) closeDriveModal();
+  });
+  // Modal close on Escape
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape') closeDriveModal();
+  });
+
+  updateDimCountLabel();
   updateGlobalProgress();
-  updateNavInfo(0);
-})();
+});
 </script>
 </body>
 </html>
