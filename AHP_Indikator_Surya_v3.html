@@ -1128,6 +1128,24 @@
                 oninput="updateId()"
               />
             </div>
+            <div class="field">
+              <label>Nama Bank</label
+              ><input
+                id="f-bank"
+                type="text"
+                placeholder="mis. BRI, BNI, Mandiri"
+                oninput="updateId()"
+              />
+            </div>
+            <div class="field">
+              <label>Nomor Rekening</label
+              ><input
+                id="f-rekening"
+                type="text"
+                placeholder="mis. 1234-5678-9012"
+                oninput="updateId()"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -2187,6 +2205,8 @@
           tanggal: document.getElementById("f-tgl").value,
           email: document.getElementById("f-email").value,
           wa: document.getElementById("f-wa").value,
+          bank: document.getElementById("f-bank").value,
+          rekening: document.getElementById("f-rekening").value,
         };
       }
       function onNote(el) {
@@ -2250,12 +2270,16 @@
           const nama = id.nama || "—",
             divisi = id.divisi || "—",
             jabatan = id.jabatan || "—",
-            tgl = id.tanggal || new Date().toISOString().slice(0, 10);
+            tgl = id.tanggal || new Date().toISOString().slice(0, 10),
+            bank = id.bank || "—",
+            rekening = id.rekening || "—";
           prev.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px">
       <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Nama</span><div style="font-weight:600;color:#111827;margin-top:2px">${nama}</div></div>
       <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Divisi</span><div style="font-weight:600;color:#111827;margin-top:2px">${divisi}</div></div>
       <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Jabatan</span><div style="font-weight:600;color:#111827;margin-top:2px">${jabatan}</div></div>
       <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Tanggal</span><div style="font-weight:600;color:#111827;margin-top:2px">${tgl}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Bank</span><div style="font-weight:600;color:#111827;margin-top:2px">${bank}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">No. Rekening</span><div style="font-weight:600;color:#111827;margin-top:2px">${rekening}</div></div>
     </div>`;
         }
         const btn = document.getElementById("btn-do-send");
@@ -2366,6 +2390,7 @@
           [`Nama: ${id.nama || "—"}`, `Divisi: ${id.divisi || "—"}`],
           [`Jabatan: ${id.jabatan || "—"}`, `Tanggal: ${tgl}`],
           [`Email: ${id.email || "—"}`, `WhatsApp: ${id.wa || "—"}`],
+          [`Bank: ${id.bank || "—"}`, `No. Rekening: ${id.rekening || "—"}`],
         ].forEach((row) => {
           row.forEach((t, i) => doc.text(t, 14 + i * 95, y));
           y += 5.5;
