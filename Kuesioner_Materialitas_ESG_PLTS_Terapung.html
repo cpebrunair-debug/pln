@@ -893,144 +893,166 @@ function driveIconBtn(label) {
 }
 
 async function sendToDrive() {
-  const btn=document.getElementById('btn-do-send');
-  const st=document.getElementById('drive-send-status');
-  btn.disabled=true; btn.classList.add('loading');
-  btn.innerHTML='<span class="spin"></span> Membuat PDF & mengirim...';
-  st.className='drive-status sending';
-  st.innerHTML='<span class="spin"></span><span>Membuat PDF, harap tunggu...</span>';
-  st.style.display='flex';
+  const btn = document.getElementById('btn-do-send');
+  const st = document.getElementById('drive-send-status');
+  btn.disabled = true; btn.classList.add('loading');
+  btn.innerHTML = '<span class="spin"></span> Membuat PDF & mengirim...';
+  st.className = 'drive-status sending';
+  st.innerHTML = '<span class="spin"></span><span>Membuat PDF, harap tunggu...</span>';
+  st.style.display = 'flex';
   try {
-    const base64pdf = await generatePDFBase64();
     syncId();
-    const id=state.identity;
-    const nama=(id.nama||'Responden').replace(/\s+/g,'_');
-    const tgl=id.tgl||new Date().toISOString().slice(0,10);
-    const filename=`ESG_PLTS_${nama}_${tgl}.pdf`;
-    st.innerHTML='<span class="spin"></span><span>Mengirim ke Google Drive...</span>';
-    const resp=await fetch(APPS_SCRIPT_URL,{
-      method:'POST',
-      body:JSON.stringify({pdf:base64pdf,filename}),
-      headers:{'Content-Type':'text/plain'},
+    const base64pdf = await generatePDFBase64();
+    const id = state.identity;
+    const nama = (id.nama || 'Responden').replace(/\s+/g, '_');
+    const tgl = id.tgl || new Date().toISOString().slice(0, 10);
+    const filename = `ESG_PLTS_${nama}_${tgl}.pdf`;
+    st.innerHTML = '<span class="spin"></span><span>Mengirim ke Google Drive...</span>';
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ pdf: base64pdf, filename }),
+      headers: { 'Content-Type': 'text/plain' },
     });
-    const json=await resp.json();
-    if(json.ok){
-      st.className='drive-status ok';
-      st.innerHTML=`<span>✓</span><span>File <b>${filename}</b> berhasil dikirim ke Google Drive!</span>`;
+    const json = await resp.json();
+    if (json.ok) {
+      st.className = 'drive-status ok';
+      st.innerHTML = `<span>✓</span><span>File <b>${filename}</b> berhasil dikirim ke Google Drive!</span>`;
       showToast('PDF berhasil dikirim ke Google Drive ✓');
-    } else { throw new Error(json.error||'Apps Script mengembalikan error'); }
-  } catch(err) {
-    st.className='drive-status err';
-    st.innerHTML=`<span>✗</span><span>Gagal mengirim: ${err.message}. Pastikan URL Apps Script benar dan deployment aktif.</span>`;
+    } else {
+      throw new Error(json.error || 'Apps Script mengembalikan error');
+    }
+  } catch (err) {
+    st.className = 'drive-status err';
+    st.innerHTML = `<span>✗</span><span>Gagal mengirim: ${err.message}. Pastikan URL Apps Script benar dan deployment sudah aktif.</span>`;
     showToast('Gagal kirim ke Drive — cek status di modal');
   } finally {
-    btn.disabled=false; btn.classList.remove('loading');
-    btn.innerHTML=driveIconBtn('Kirim');
+    btn.disabled = false; btn.classList.remove('loading');
+    btn.innerHTML = driveIconBtn('Kirim');
   }
 }
 
 function generatePDFBase64() {
-  return new Promise((resolve,reject)=>{
+  return new Promise((resolve, reject) => {
     try {
-      const {jsPDF}=window.jspdf;
-      const doc=buildPDFDoc(jsPDF);
-      resolve(doc.output('datauristring').split(',')[1]);
-    } catch(err){ reject(err); }
-  });
-}
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+      const W = doc.internal.pageSize.getWidth();
+      const id = state.identity;
+      const activeDims = DIMS.filter(d => selectedDims.has(d.id));
+      const nama = id.nama || 'Responden';
+      const tgl = id.tgl || new Date().toISOString().slice(0, 10);
+      let y = 15;
 
-function buildPDFDoc(jsPDF) {
-  const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
-  const W=doc.internal.pageSize.getWidth();
-  const id=state.identity;
-  const activeDims=DIMS.filter(d=>selectedDims.has(d.id));
-  let y=15;
+      // Header
+      doc.setFillColor(15, 39, 68);
+      doc.rect(0, 0, W, 28, 'F');
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(13); doc.setFont('helvetica', 'bold');
+      doc.text('Kuesioner Materialitas Risiko ESG — PLTS Terapung', W / 2, 11, { align: 'center' });
+      doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+      doc.text('PT PLN (Persero) · Penilaian Umum Nasional', W / 2, 18, { align: 'center' });
+      y = 36;
 
-  // Header
-  doc.setFillColor(15,39,68);
-  doc.rect(0,0,W,28,'F');
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(13); doc.setFont('helvetica','bold');
-  doc.text('Kuesioner Materialitas Risiko ESG — PLTS Terapung',W/2,11,{align:'center'});
-  doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.text('PLN · Penilaian Umum Nasional',W/2,18,{align:'center'});
-  y=36;
+      // Identity block
+      doc.setTextColor(15, 39, 68);
+      doc.setFontSize(9.5); doc.setFont('helvetica', 'bold');
+      doc.text('DATA DIRI', 14, y);
+      y += 5.5;
+      doc.setFontSize(8); doc.setFont('helvetica', 'normal');
+      doc.setTextColor(40, 40, 40);
+      [
+        [`Nama: ${id.nama || '—'}`, `Divisi: ${id.div || '—'}`],
+        [`Jabatan: ${id.jab || '—'}`, `Tanggal: ${id.tgl || '—'}`],
+        [`Email: ${id.email || '—'}`, `Dimensi: ${activeDims.map(d => d.short).join(', ') || '—'}`],
+      ].forEach(row => {
+        row.forEach((t, i) => doc.text(t, 14 + i * 93, y));
+        y += 5;
+      });
+      y += 8;
 
-  // Identity block
-  doc.setTextColor(30,30,30);
-  doc.setFontSize(8); doc.setFont('helvetica','normal');
-  const fields=[
-    ['Penilai',id.nama||'—'],['Divisi',id.div||'—'],
-    ['Jabatan',id.jab||'—'],['Tanggal',id.tgl||'—'],
-    ['Email',id.email||'—'],
-    ['Dimensi Dinilai',activeDims.map(d=>d.short).join(', ')||'—'],
-  ];
-  fields.forEach(([k,v],i)=>{
-    const col=i%2===0?14:W/2+2;
-    if(i%2===0 && i>0) y+=8;
-    doc.setFont('helvetica','bold'); doc.text(k+': ',col,y);
-    doc.setFont('helvetica','normal'); doc.text(v,col+doc.getTextWidth(k+': '),y);
-  });
-  y+=14;
+      // Table per dim
+      activeDims.forEach(dim => {
+        // Dim header
+        if (y > 265) { doc.addPage(); y = 15; }
+        doc.setFillColor(29, 78, 216);
+        doc.roundedRect(10, y, W - 20, 9, 2, 2, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(8.5); doc.setFont('helvetica', 'bold');
+        doc.text(`${dim.label}`, 14, y + 6);
+        y += 13;
 
-  // Table per dim
-  activeDims.forEach(dim=>{
-    // Dim header
-    if(y>265){ doc.addPage(); y=15; }
-    doc.setFillColor(15,39,68);
-    doc.rect(14,y-5,W-28,9,'F');
-    doc.setTextColor(255,255,255);
-    doc.setFontSize(8.5); doc.setFont('helvetica','bold');
-    doc.text(`${dim.icon} ${dim.label}`,16,y);
-    y+=8;
+        // Column headers
+        doc.setFillColor(15, 39, 68);
+        doc.rect(10, y, W - 20, 7, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+        doc.text('Kode', 14, y + 5);
+        doc.text('Variabel Risiko', 30, y + 5);
+        doc.text('P', W - 42, y + 5, { align: 'center' });
+        doc.text('I', W - 32, y + 5, { align: 'center' });
+        doc.text('P×I', W - 22, y + 5, { align: 'center' });
+        doc.text('Level', W - 14, y + 5, { align: 'right' });
+        y += 7;
 
-    // Column headers
-    doc.setFillColor(240,244,248);
-    doc.rect(14,y-5,W-28,8,'F');
-    doc.setTextColor(80,80,80);
-    doc.setFontSize(7); doc.setFont('helvetica','bold');
-    doc.text('Kode',16,y);
-    doc.text('Variabel Risiko',30,y);
-    doc.text('P',W-42,y,{align:'center'});
-    doc.text('I',W-32,y,{align:'center'});
-    doc.text('P×I',W-22,y,{align:'center'});
-    doc.text('Level',W-14,y,{align:'right'});
-    y+=7;
+        dim.items.forEach((item, idx) => {
+          if (y > 272) { doc.addPage(); y = 15; }
+          const sc = state.scores[item.code];
+          const total = (sc.P && sc.I) ? sc.P * sc.I : null;
+          const lv = total ? scoreLevel(total) : null;
+          const bg = idx % 2 === 0 ? [248, 250, 253] : [255, 255, 255];
+          doc.setFillColor(...bg);
+          doc.rect(10, y, W - 20, sc.note ? 13 : 8, 'F');
+          doc.setDrawColor(220, 225, 235);
+          doc.rect(10, y, W - 20, sc.note ? 13 : 8, 'S');
+          doc.setTextColor(30, 30, 30);
+          doc.setFontSize(7); doc.setFont('helvetica', 'bold');
+          doc.text(item.code, 14, y + 5.5);
+          doc.setFont('helvetica', 'normal');
+          const nameLines = doc.splitTextToSize(item.name, W - 28 - 40);
+          doc.text(nameLines[0], 30, y + 5.5);
+          doc.text(sc.P ? String(sc.P) : '—', W - 42, y + 5.5, { align: 'center' });
+          doc.text(sc.I ? String(sc.I) : '—', W - 32, y + 5.5, { align: 'center' });
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(29, 78, 216);
+          doc.text(total ? String(total) : '—', W - 22, y + 5.5, { align: 'center' });
+          const lvColor = lv?.cls === 'lv-st' ? [185, 28, 28] : lv?.cls === 'lv-t' ? [194, 65, 12] : lv?.cls === 'lv-s' ? [133, 77, 14] : [21, 128, 61];
+          doc.setTextColor(...lvColor);
+          doc.text(lv ? lv.lbl : 'Belum', W - 14, y + 5.5, { align: 'right' });
+          doc.setTextColor(30, 30, 30);
+          if (sc.note) {
+            doc.setFont('helvetica', 'italic'); doc.setFontSize(6.5);
+            doc.setTextColor(100, 116, 139);
+            const noteLines = doc.splitTextToSize('Catatan: ' + sc.note, W - 34);
+            doc.text(noteLines[0], 30, y + 10.5);
+            doc.setTextColor(30, 30, 30);
+            y += 13;
+          } else {
+            y += 8;
+          }
+        });
+        y += 6;
+      });
 
-    dim.items.forEach((item,idx)=>{
-      if(y>272){ doc.addPage(); y=15; }
-      const sc=state.scores[item.code];
-      const total=(sc.P&&sc.I)?sc.P*sc.I:null;
-      const lv=total?scoreLevel(total):null;
-      if(idx%2===0){ doc.setFillColor(248,250,253); doc.rect(14,y-4,W-28,7,'F'); }
-      doc.setTextColor(30,30,30);
-      doc.setFontSize(7); doc.setFont('helvetica','bold');
-      doc.text(item.code,16,y);
-      doc.setFont('helvetica','normal');
-      const nameLines=doc.splitTextToSize(item.name,W-28-32);
-      doc.text(nameLines[0],30,y);
-      doc.text(sc.P?String(sc.P):'—',W-42,y,{align:'center'});
-      doc.text(sc.I?String(sc.I):'—',W-32,y,{align:'center'});
-      doc.text(total?String(total):'—',W-22,y,{align:'center'});
-      doc.setFont('helvetica','bold');
-      doc.setTextColor(lv?.cls==='lv-st'?[185,28,28]:lv?.cls==='lv-t'?[194,65,12]:lv?.cls==='lv-s'?[133,77,14]:[21,128,61]);
-      doc.text(lv?lv.lbl:'Belum',W-14,y,{align:'right'});
-      doc.setTextColor(30,30,30);
-      if(sc.note){
-        y+=5;
-        doc.setFont('helvetica','italic'); doc.setFontSize(6.5);
-        const noteLines=doc.splitTextToSize('Catatan: '+sc.note,W-34);
-        doc.text(noteLines[0],30,y);
+      // Page footers
+      const pages = doc.internal.getNumberOfPages();
+      for (let p = 1; p <= pages; p++) {
+        doc.setPage(p);
+        doc.setFontSize(6.5);
+        doc.setTextColor(160, 160, 160);
+        doc.setFont('helvetica', 'normal');
+        doc.text(
+          `Hal ${p}/${pages} · ${nama} · ${tgl} · Materialitas ESG PLTS Terapung`,
+          W / 2, 292, { align: 'center' }
+        );
       }
-      y+=7;
-    });
-    y+=4;
-  });
 
-  // Footer
-  doc.setTextColor(150,150,150); doc.setFontSize(7); doc.setFont('helvetica','normal');
-  doc.text(`Digenerate: ${new Date().toLocaleString('id-ID')}`,W/2,doc.internal.pageSize.getHeight()-8,{align:'center'});
-  return doc;
+      // Return as base64 string
+      const b64 = doc.output('datauristring').split(',')[1];
+      resolve(b64);
+    } catch (err) {
+      reject(err);
+    }
+  });
 }
 
 function printPage() { window.print(); }
