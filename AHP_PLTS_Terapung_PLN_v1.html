@@ -2644,16 +2644,14 @@
               y = 14;
             }
             doc.setFillColor(255, 251, 235);
-            doc.roundedRect(10, y, W - 20, 6, "F");
+            doc.roundedRect(10, y, W - 20, 8, 2, 2, "F");
             doc.setFillColor(146, 64, 14);
-            doc.roundedRect(10, y, 4, 6, "F");
+            doc.roundedRect(10, y, 4, 8, 1, 1, "F");
             doc.setTextColor(146, 64, 14);
-            doc.setFontSize(7);
+            doc.setFontSize(7.5);
             doc.setFont("helvetica", "bold");
-            doc.text("CATATAN / INSIGHT PAKAR", 16, y + 4.2);
-            y += 8;
-            doc.setFillColor(255, 253, 245);
-            doc.roundedRect(10, y, W - 20, 4, "F");
+            doc.text("CATATAN / INSIGHT PAKAR", 16, y + 5.5);
+            y += 12;
             doc.setTextColor(60, 40, 10);
             doc.setFontSize(7.5);
             doc.setFont("helvetica", "normal");
@@ -2663,7 +2661,7 @@
                 doc.addPage();
                 y = 14;
               }
-              doc.text(line, 14, y + 3.5);
+              doc.text(line, 14, y);
               y += 5.5;
             });
             y += 5;
@@ -3088,16 +3086,14 @@
                   y = 14;
                 }
                 doc.setFillColor(255, 251, 235);
-                doc.roundedRect(10, y, W - 20, 6, "F");
+                doc.roundedRect(10, y, W - 20, 8, 2, 2, "F");
                 doc.setFillColor(146, 64, 14);
-                doc.roundedRect(10, y, 4, 6, "F");
+                doc.roundedRect(10, y, 4, 8, 1, 1, "F");
                 doc.setTextColor(146, 64, 14);
-                doc.setFontSize(7);
+                doc.setFontSize(7.5);
                 doc.setFont("helvetica", "bold");
-                doc.text("CATATAN / INSIGHT PAKAR", 16, y + 4.2);
-                y += 8;
-                doc.setFillColor(255, 253, 245);
-                doc.roundedRect(10, y, W - 20, 4, "F");
+                doc.text("CATATAN / INSIGHT PAKAR", 16, y + 5.5);
+                y += 12;
                 doc.setTextColor(60, 40, 10);
                 doc.setFontSize(7.5);
                 doc.setFont("helvetica", "normal");
@@ -3107,7 +3103,7 @@
                     doc.addPage();
                     y = 14;
                   }
-                  doc.text(line, 14, y + 3.5);
+                  doc.text(line, 14, y);
                   y += 5.5;
                 });
                 y += 5;
