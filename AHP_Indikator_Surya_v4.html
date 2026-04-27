@@ -1,0 +1,2619 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AHP — Indikator Potensi Surya PLTS Terapung</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+      :root {
+        --bg: #f4f6fa;
+        --surface: #ffffff;
+        --navy: #0b1e3d;
+        --navy2: #142952;
+        --blue: #1b5bff;
+        --blue-lt: #ebf0ff;
+        --gold: #e6a817;
+        --gold-lt: #fef9ec;
+        --green: #0d9e5c;
+        --green-lt: #e6faf1;
+        --red: #d92b3a;
+        --red-lt: #fdecea;
+        --amber: #f07d00;
+        --amber-lt: #fff4e5;
+        --ink: #0d1b2a;
+        --muted: #64748b;
+        --border: #dde3ef;
+        --shadow:
+          0 2px 12px rgba(11, 30, 61, 0.08), 0 1px 3px rgba(11, 30, 61, 0.06);
+        --shadow-lg: 0 12px 40px rgba(11, 30, 61, 0.16);
+        --r: 14px;
+        --rsm: 8px;
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Space Grotesk", sans-serif;
+        background: var(--bg);
+        color: var(--ink);
+        min-height: 100vh;
+        font-size: 14px;
+        overflow-x: hidden;
+      }
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background:
+          radial-gradient(
+            ellipse 80% 60% at 20% 10%,
+            rgba(27, 91, 255, 0.055) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 60% 50% at 80% 80%,
+            rgba(230, 168, 23, 0.04) 0%,
+            transparent 60%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .hdr {
+        background: var(--navy);
+        padding: 0 28px;
+        height: 58px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 300;
+        box-shadow: 0 2px 16px rgba(0, 0, 0, 0.32);
+      }
+      .hdr-left {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .hdr-logo {
+        width: 32px;
+        height: 32px;
+        background: linear-gradient(135deg, var(--blue), #6b9fff);
+        border-radius: 8px;
+        display: grid;
+        place-items: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+      .hdr-title {
+        font-size: 0.82rem;
+        font-weight: 600;
+        color: #fff;
+        letter-spacing: -0.1px;
+      }
+      .hdr-sub {
+        font-size: 0.62rem;
+        color: rgba(255, 255, 255, 0.45);
+        margin-top: 1px;
+      }
+      .prog-chip {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 99px;
+        padding: 5px 12px;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+      }
+      .prog-txt {
+        font-size: 0.62rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-family: "DM Mono", monospace;
+      }
+      .prog-track {
+        width: 72px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 99px;
+      }
+      .prog-fill {
+        height: 4px;
+        background: var(--gold);
+        border-radius: 99px;
+        transition: width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+
+      .main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 28px 18px 60px;
+        position: relative;
+        z-index: 1;
+      }
+      .section-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        background: var(--blue-lt);
+        border: 1.5px solid rgba(27, 91, 255, 0.2);
+        border-radius: 99px;
+        padding: 4px 12px;
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--blue);
+        letter-spacing: 0.4px;
+        margin-bottom: 12px;
+      }
+
+      .card {
+        background: var(--surface);
+        border-radius: var(--r);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        margin-bottom: 20px;
+        border: 1px solid var(--border);
+      }
+      .card-hdr {
+        background: linear-gradient(135deg, var(--navy) 0%, var(--navy2) 100%);
+        padding: 18px 22px;
+        color: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+      .card-hdr::after {
+        content: "";
+        position: absolute;
+        right: -20px;
+        top: -20px;
+        width: 120px;
+        height: 120px;
+        background: radial-gradient(
+          circle,
+          rgba(27, 91, 255, 0.18),
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .card-hdr h2 {
+        font-size: 1rem;
+        font-weight: 700;
+        letter-spacing: -0.2px;
+      }
+      .card-hdr p {
+        font-size: 0.72rem;
+        opacity: 0.65;
+        margin-top: 5px;
+        line-height: 1.6;
+        max-width: 600px;
+      }
+      .card-body {
+        padding: 20px 22px;
+      }
+
+      .fg {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 11px;
+      }
+      .field {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+      .field label {
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+      .field input {
+        border: 1.5px solid var(--border);
+        border-radius: var(--rsm);
+        padding: 9px 12px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.82rem;
+        background: var(--gold-lt);
+        transition: all 0.2s;
+        color: var(--ink);
+      }
+      .field input:focus {
+        outline: none;
+        border-color: var(--blue);
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(27, 91, 255, 0.1);
+      }
+      .field input::placeholder {
+        color: #b0b8c8;
+      }
+
+      .ind-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.76rem;
+      }
+      .ind-table th {
+        background: var(--bg);
+        padding: 8px 12px;
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-align: left;
+        border-bottom: 2px solid var(--border);
+      }
+      .ind-table td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        vertical-align: top;
+        line-height: 1.5;
+      }
+      .ind-table tr:last-child td {
+        border-bottom: none;
+      }
+      .ind-table tr:hover td {
+        background: var(--blue-lt);
+      }
+      .ind-code {
+        display: inline-block;
+        background: var(--navy);
+        color: #fff;
+        border-radius: 5px;
+        padding: 3px 8px;
+        font-size: 0.63rem;
+        font-weight: 700;
+        font-family: "DM Mono", monospace;
+        letter-spacing: 0.3px;
+      }
+
+      .cr-bar {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 12px 22px;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+      }
+      .cr-lbl {
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .cr-outer-wrap {
+        flex: 1;
+        min-width: 100px;
+        position: relative;
+      }
+      .cr-outer {
+        width: 100%;
+        height: 8px;
+        background: var(--border);
+        border-radius: 99px;
+        overflow: hidden;
+      }
+      .cr-fill {
+        height: 8px;
+        border-radius: 99px;
+        background: var(--green);
+        transition:
+          width 0.5s,
+          background 0.4s;
+      }
+      .cr-marker {
+        position: absolute;
+        top: -3px;
+        left: 33.3%;
+        width: 2.5px;
+        height: 14px;
+        background: rgba(0, 0, 0, 0.35);
+        border-radius: 2px;
+      }
+      .cr-num {
+        font-size: 0.76rem;
+        font-weight: 700;
+        font-family: "DM Mono", monospace;
+        min-width: 52px;
+        text-align: right;
+        transition: color 0.3s;
+      }
+      .cr-badge {
+        font-size: 0.64rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 99px;
+        white-space: nowrap;
+      }
+      .cr-empty {
+        background: var(--bg);
+        color: var(--muted);
+        border: 1px solid var(--border);
+      }
+      .cr-ok {
+        background: var(--green-lt);
+        color: var(--green);
+      }
+      .cr-near {
+        background: var(--amber-lt);
+        color: var(--amber);
+      }
+      .cr-bad {
+        background: var(--red-lt);
+        color: var(--red);
+      }
+      .cr-partial {
+        background: var(--blue-lt);
+        color: var(--blue);
+      }
+
+      .conflict-box {
+        display: none;
+        margin: 12px 22px 0;
+        padding: 12px 15px;
+        border-radius: var(--rsm);
+        background: var(--red-lt);
+        border: 1.5px solid #fbcac9;
+        font-size: 0.73rem;
+        color: var(--red);
+        font-weight: 600;
+      }
+      .conflict-box.show {
+        display: block;
+      }
+
+      .legend-bar {
+        display: flex;
+        background: #f8faff;
+        border-bottom: 1px solid var(--border);
+        overflow-x: auto;
+        scrollbar-width: none;
+      }
+      .legend-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .leg-side {
+        padding: 5px 10px;
+        font-size: 0.6rem;
+        font-weight: 700;
+        white-space: nowrap;
+        border-right: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+      }
+      .leg-side.left {
+        color: var(--blue);
+      }
+      .leg-side.right {
+        color: var(--red);
+        border-right: none;
+        border-left: 1px solid var(--border);
+      }
+      .leg-item {
+        flex: 1;
+        min-width: 30px;
+        text-align: center;
+        padding: 5px 2px;
+        font-size: 0.55rem;
+        font-weight: 600;
+        color: var(--muted);
+        border-right: 1px solid var(--border);
+      }
+      .leg-num {
+        font-size: 0.7rem;
+        font-weight: 800;
+        display: block;
+        margin-bottom: 1px;
+        font-family: "DM Mono", monospace;
+      }
+      .leg-item.ll .leg-num {
+        color: var(--blue);
+      }
+      .leg-item.eq .leg-num {
+        color: var(--navy);
+      }
+      .leg-item.lr .leg-num {
+        color: var(--red);
+      }
+
+      .pw-wrap {
+        padding: 16px 22px 20px;
+      }
+      .pw-hdr {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+      .pw-title {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+      .pw-count-badge {
+        background: var(--blue-lt);
+        color: var(--blue);
+        border-radius: 99px;
+        padding: 3px 10px;
+        font-size: 0.64rem;
+        font-weight: 700;
+        font-family: "DM Mono", monospace;
+      }
+      .btn-autofill {
+        background: none;
+        border: 1.5px solid var(--blue);
+        color: var(--blue);
+        border-radius: 6px;
+        padding: 5px 12px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.68rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.18s;
+        display: none;
+        align-items: center;
+        gap: 5px;
+      }
+      .btn-autofill.visible {
+        display: inline-flex;
+      }
+      .btn-autofill:hover {
+        background: var(--blue);
+        color: #fff;
+      }
+
+      .pw-row {
+        display: grid;
+        grid-template-columns: minmax(90px, 1fr) auto minmax(90px, 1fr);
+        gap: 10px;
+        align-items: center;
+        padding: 9px 12px;
+        border-radius: 10px;
+        border: 1.5px solid transparent;
+        margin-bottom: 6px;
+        transition: all 0.22s;
+        background: var(--bg);
+      }
+      .pw-row:hover {
+        background: var(--blue-lt);
+      }
+      .pw-row.answered {
+        border-color: rgba(27, 91, 255, 0.2);
+        background: var(--blue-lt);
+      }
+      .pw-row.conflict {
+        border-color: var(--red);
+        background: var(--red-lt);
+        animation: pulse 1.6s ease infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          background: var(--red-lt);
+        }
+        50% {
+          background: #ffe4e4;
+        }
+      }
+      .vname {
+        font-size: 0.76rem;
+        font-weight: 600;
+        color: var(--ink);
+        line-height: 1.3;
+      }
+      .vcode {
+        font-size: 0.61rem;
+        color: var(--muted);
+        margin-top: 1px;
+        font-family: "DM Mono", monospace;
+      }
+      .vname.right,
+      .vcode.right {
+        text-align: right;
+      }
+      .btns {
+        display: flex;
+        gap: 2px;
+        justify-content: center;
+      }
+      .sb {
+        height: 32px;
+        min-width: 30px;
+        border-radius: 5px;
+        border: 1.5px solid var(--border);
+        background: var(--surface);
+        cursor: pointer;
+        font-family: "DM Mono", monospace;
+        font-size: 0.68rem;
+        font-weight: 500;
+        transition: all 0.12s;
+        color: var(--muted);
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+      }
+      .sb:hover {
+        border-color: var(--blue);
+        color: var(--blue);
+        transform: translateY(-1px);
+      }
+      .sb.sl {
+        background: #ebf0ff;
+        border-color: rgba(27, 91, 255, 0.25);
+        color: var(--blue);
+      }
+      .sb.sr {
+        background: #fff0f0;
+        border-color: rgba(217, 43, 58, 0.2);
+        color: var(--red);
+      }
+      .sb.eq {
+        font-size: 0.6rem;
+      }
+      .sb.sel-l {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: #fff;
+        transform: scale(1.12);
+        box-shadow: 0 3px 10px rgba(27, 91, 255, 0.4);
+      }
+      .sb.sel-r {
+        background: var(--red);
+        border-color: var(--red);
+        color: #fff;
+        transform: scale(1.12);
+        box-shadow: 0 3px 10px rgba(217, 43, 58, 0.3);
+      }
+      .sb.sel-l.eq,
+      .sb.sel-r.eq {
+        background: var(--navy);
+        border-color: var(--navy);
+      }
+      .sb.hint-ok {
+        outline: 2px solid #22c55e;
+        outline-offset: 1px;
+      }
+      .sb.hint-warn {
+        outline: 2px solid #f59e0b;
+        outline-offset: 1px;
+      }
+      .sb.hint-bad {
+        outline: 2px solid #ef4444;
+        outline-offset: 1px;
+      }
+
+      .weights-box {
+        margin: 0 22px 20px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .wbox-hdr {
+        background: var(--navy);
+        padding: 8px 14px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.63rem;
+        font-weight: 700;
+        color: rgba(255, 255, 255, 0.55);
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+      }
+      .w-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s;
+      }
+      .w-row:last-child {
+        border-bottom: none;
+      }
+      .w-row:hover {
+        background: var(--bg);
+      }
+      .w-rnk {
+        width: 22px;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+        flex-shrink: 0;
+        font-family: "DM Mono", monospace;
+      }
+      .w-name {
+        flex: 1;
+        font-size: 0.77rem;
+        font-weight: 600;
+      }
+      .w-code {
+        font-size: 0.6rem;
+        color: var(--muted);
+        margin-left: 5px;
+        font-family: "DM Mono", monospace;
+        font-weight: 400;
+      }
+      .w-bwrap {
+        width: 100px;
+        height: 5px;
+        background: var(--border);
+        border-radius: 99px;
+        flex-shrink: 0;
+      }
+      .w-bfill {
+        height: 5px;
+        background: var(--blue);
+        border-radius: 99px;
+        transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .w-pct {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--blue);
+        width: 42px;
+        text-align: right;
+        flex-shrink: 0;
+        font-family: "DM Mono", monospace;
+      }
+
+      .expert-note-wrap {
+        margin: 0 22px 22px;
+        border: 1.5px solid #fde68a;
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fffbeb;
+      }
+      .expert-note-hdr {
+        background: linear-gradient(90deg, #92400e 0%, #b45309 100%);
+        padding: 9px 15px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .enote-left {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .enote-title {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: #fff;
+      }
+      .enote-sub {
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.65);
+        font-weight: 400;
+      }
+      .enote-char {
+        font-size: 0.6rem;
+        color: rgba(255, 255, 255, 0.5);
+        font-family: "DM Mono", monospace;
+      }
+      .enote-char.warn {
+        color: #fca5a5;
+      }
+      .expert-note-body {
+        padding: 11px 15px;
+      }
+      .expert-note-textarea {
+        width: 100%;
+        min-height: 80px;
+        border: 1.5px solid #fde68a;
+        border-radius: 7px;
+        padding: 10px 12px;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.78rem;
+        color: var(--ink);
+        background: #fffdf5;
+        resize: vertical;
+        line-height: 1.6;
+        transition: all 0.2s;
+      }
+      .expert-note-textarea:focus {
+        outline: none;
+        border-color: #f59e0b;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+      }
+      .expert-note-textarea::placeholder {
+        color: #d97706;
+        opacity: 0.55;
+      }
+      .enote-footer {
+        padding: 0 15px 11px;
+        font-size: 0.62rem;
+        color: #92400e;
+        opacity: 0.7;
+      }
+
+      .nav-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 16px 22px;
+        background: var(--bg);
+        border-top: 1px solid var(--border);
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .btn-nav {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 10px 20px;
+        border-radius: var(--rsm);
+        border: none;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.18s;
+        white-space: nowrap;
+      }
+      .btn-pdf {
+        background: var(--navy);
+        color: #fff;
+        box-shadow: 0 2px 10px rgba(11, 30, 61, 0.25);
+      }
+      .btn-pdf:hover {
+        background: var(--navy2);
+        transform: translateY(-1px);
+      }
+      .btn-reset {
+        background: var(--surface);
+        color: var(--muted);
+        border: 1.5px solid var(--border);
+      }
+      .btn-reset:hover {
+        background: var(--red-lt);
+        color: var(--red);
+        border-color: var(--red);
+      }
+      .btn-nav:disabled {
+        opacity: 0.38;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .nav-status {
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 500;
+        text-align: center;
+        flex: 1;
+      }
+
+      /* DRIVE BUTTON */
+      .btn-drive {
+        background: #fff;
+        color: #1a73e8;
+        border: 1.5px solid #1a73e8;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        padding: 10px 18px;
+        border-radius: var(--rsm);
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.18s;
+        white-space: nowrap;
+        box-shadow: 0 1px 4px rgba(26, 115, 232, 0.15);
+      }
+      .btn-drive:hover {
+        background: #1a73e8;
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 14px rgba(26, 115, 232, 0.35);
+      }
+      .btn-drive:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+        transform: none !important;
+      }
+      .btn-drive.loading {
+        background: #e8f0fe;
+        color: #1a73e8;
+        border-color: #a8c7fa;
+      }
+      .btn-drive svg {
+        flex-shrink: 0;
+      }
+
+      /* MODAL */
+      .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 900;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+        backdrop-filter: blur(3px);
+      }
+      .modal-overlay.open {
+        display: flex;
+        animation: fadeUp 0.2s ease;
+      }
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 520px;
+        box-shadow: 0 24px 64px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+      }
+      .modal-hdr {
+        background: linear-gradient(135deg, #0f2744, #1a3a6b);
+        padding: 18px 22px;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .modal-hdr h3 {
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        font-family: "Space Grotesk", sans-serif;
+      }
+      .modal-hdr p {
+        font-size: 0.72rem;
+        opacity: 0.7;
+        line-height: 1.5;
+      }
+      .modal-close {
+        background: rgba(255, 255, 255, 0.1);
+        border: none;
+        color: #fff;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 1rem;
+        display: grid;
+        place-items: center;
+        flex-shrink: 0;
+        margin-left: 10px;
+        transition: background 0.15s;
+      }
+      .modal-close:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .modal-body {
+        padding: 20px 22px;
+      }
+      .drive-status {
+        display: none;
+        margin-top: 8px;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+      .drive-status.ok {
+        display: flex;
+        gap: 8px;
+        background: #dcfce7;
+        color: #15803d;
+        border: 1.5px solid #bbf7d0;
+        align-items: center;
+      }
+      .drive-status.err {
+        display: flex;
+        gap: 8px;
+        background: #fee2e2;
+        color: #b91c1c;
+        border: 1.5px solid #fca5a5;
+        align-items: center;
+      }
+      .drive-status.sending {
+        display: flex;
+        gap: 8px;
+        background: #eff6ff;
+        color: #1a73e8;
+        border: 1.5px solid #bfdbfe;
+        align-items: center;
+      }
+      .spin {
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        border: 2px solid currentColor;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spinning 0.7s linear infinite;
+        flex-shrink: 0;
+      }
+      @keyframes spinning {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .info-hint {
+        margin: 0 22px 16px;
+        padding: 11px 15px;
+        background: var(--blue-lt);
+        border-left: 3px solid var(--blue);
+        border-radius: 0 8px 8px 0;
+        font-size: 0.72rem;
+        color: #1e3a5f;
+        line-height: 1.65;
+      }
+      .toast {
+        position: fixed;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%) translateY(80px);
+        background: var(--ink);
+        color: #fff;
+        border-radius: 10px;
+        padding: 11px 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        z-index: 999;
+        transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: var(--shadow-lg);
+        white-space: nowrap;
+      }
+      .toast.show {
+        transform: translateX(-50%) translateY(0);
+      }
+
+      @media (max-width: 640px) {
+        .hdr {
+          padding: 0 14px;
+          height: 50px;
+        }
+        .hdr-title {
+          font-size: 0.74rem;
+        }
+        .prog-chip {
+          display: none;
+        }
+        .fg {
+          grid-template-columns: 1fr;
+        }
+        .card-body,
+        .card-hdr {
+          padding: 14px;
+        }
+        .pw-row {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto auto auto;
+          gap: 6px;
+          padding: 10px;
+        }
+        .vname.right,
+        .vcode.right {
+          text-align: left;
+        }
+        .btns {
+          width: 100%;
+          justify-content: center;
+        }
+        .sb {
+          flex: 1;
+          max-width: 36px;
+          height: 34px;
+        }
+        .nav-bar {
+          padding: 12px 14px;
+        }
+        .weights-box,
+        .expert-note-wrap,
+        .conflict-box,
+        .info-hint {
+          margin-left: 14px;
+          margin-right: 14px;
+        }
+        .cr-bar {
+          padding: 10px 14px;
+        }
+        .pw-wrap {
+          padding: 12px 14px 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="hdr">
+      <div class="hdr-left">
+        <div class="hdr-logo">☀</div>
+        <div>
+          <div class="hdr-title">
+            AHP — Indikator Potensi Surya PLTS Terapung
+          </div>
+          <div class="hdr-sub">
+            PT PLN (Persero) · Penilaian Bobot Indikator
+          </div>
+        </div>
+      </div>
+      <div class="prog-chip">
+        <span class="prog-txt" id="prog-lbl">0 / 10 diisi</span>
+        <div class="prog-track">
+          <div class="prog-fill" id="prog-fill" style="width: 0%"></div>
+        </div>
+      </div>
+    </header>
+
+    <main class="main">
+      <div class="section-badge">📋 DATA DIRI PENGISI</div>
+      <div class="card">
+        <div class="card-hdr">
+          <h2>Identitas Responden</h2>
+          <p>
+            Harap isi data diri lengkap. Data ini digunakan untuk identifikasi
+            dan agregasi hasil AHP.
+          </p>
+        </div>
+        <div class="card-body">
+          <div class="fg">
+            <div class="field">
+              <label>Nama Lengkap</label
+              ><input
+                id="f-nama"
+                type="text"
+                placeholder="Nama lengkap Anda"
+                oninput="updateId()"
+              />
+            </div>
+            <div class="field">
+              <label>Divisi / Unit Kerja</label
+              ><input
+                id="f-div"
+                type="text"
+                placeholder="mis. UP3 Jawa Timur"
+                oninput="updateId()"
+              />
+            </div>
+            <div class="field">
+              <label>Jabatan / Spesialisasi</label
+              ><input
+                id="f-jab"
+                type="text"
+                placeholder="mis. Manajer Perencanaan"
+                oninput="updateId()"
+              />
+            </div>
+            <div class="field">
+              <label>Tanggal Pengisian</label
+              ><input id="f-tgl" type="date" oninput="updateId()" />
+            </div>
+            <div class="field">
+              <label>Email</label
+              ><input
+                id="f-email"
+                type="email"
+                placeholder="email@pln.co.id"
+                oninput="updateId()"
+              />
+            </div>
+            <div class="field">
+              <label>Nomor WhatsApp</label
+              ><input
+                id="f-wa"
+                type="tel"
+                placeholder="08xx-xxxx-xxxx"
+                oninput="updateId()"
+              />
+            </div>
+            <div class="field">
+              <label>Nama Bank</label
+              ><input
+                id="f-bank"
+                type="text"
+                placeholder="mis. BRI, BNI, Mandiri"
+                oninput="updateId()"
+              />
+            </div>
+            <div class="field">
+              <label>Nomor Rekening</label
+              ><input
+                id="f-rekening"
+                type="text"
+                placeholder="mis. 1234-5678-9012"
+                oninput="updateId()"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-hdr">
+          <h2>Petunjuk Pengisian</h2>
+          <p>
+            Penilaian bobot indikator potensi surya menggunakan metode AHP
+            (Analytic Hierarchy Process)
+          </p>
+        </div>
+        <div
+          class="card-body"
+          style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px"
+        >
+          <div
+            style="
+              display: flex;
+              gap: 9px;
+              padding: 11px 13px;
+              border-radius: 8px;
+              background: #eff6ff;
+            "
+          >
+            <div style="font-size: 1.1rem; flex-shrink: 0">1</div>
+            <div>
+              <div
+                style="font-weight: 700; font-size: 0.8rem; margin-bottom: 3px"
+              >
+                Bandingkan tiap pasang
+              </div>
+              <div
+                style="
+                  font-size: 0.71rem;
+                  color: var(--muted);
+                  line-height: 1.45;
+                "
+              >
+                Setiap baris menampilkan dua indikator. Klik angka di sisi kiri
+                jika indikator kiri lebih penting, atau kanan jika sebaliknya.
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 9px;
+              padding: 11px 13px;
+              border-radius: 8px;
+              background: #f0fdf4;
+            "
+          >
+            <div style="font-size: 1.1rem; flex-shrink: 0">2</div>
+            <div>
+              <div
+                style="font-weight: 700; font-size: 0.8rem; margin-bottom: 3px"
+              >
+                Arti angka Saaty
+              </div>
+              <div
+                style="
+                  font-size: 0.71rem;
+                  color: var(--muted);
+                  line-height: 1.45;
+                "
+              >
+                1=Sama · 3=Sedikit lebih · 5=Cukup lebih · 7=Sangat lebih ·
+                9=Mutlak lebih penting.
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 9px;
+              padding: 11px 13px;
+              border-radius: 8px;
+              background: #fffbeb;
+            "
+          >
+            <div style="font-size: 1.1rem; flex-shrink: 0">3</div>
+            <div>
+              <div
+                style="font-weight: 700; font-size: 0.8rem; margin-bottom: 3px"
+              >
+                CR Meter (Konsistensi)
+              </div>
+              <div
+                style="
+                  font-size: 0.71rem;
+                  color: var(--muted);
+                  line-height: 1.45;
+                "
+              >
+                CR harus &lt; 0.10 agar hasil valid. Sistem highlight baris yang
+                berkontradiksi.
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              display: flex;
+              gap: 9px;
+              padding: 11px 13px;
+              border-radius: 8px;
+              background: #fff1f2;
+            "
+          >
+            <div style="font-size: 1.1rem; flex-shrink: 0">💡</div>
+            <div>
+              <div
+                style="font-weight: 700; font-size: 0.8rem; margin-bottom: 3px"
+              >
+                Tentang inkonsistensi
+              </div>
+              <div
+                style="
+                  font-size: 0.71rem;
+                  color: var(--muted);
+                  line-height: 1.45;
+                "
+              >
+                Jika ada tanda merah, itu sinyal ada penilaian yang perlu
+                direfleksikan — bukan berarti salah.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-badge" style="margin-top: 8px">
+        ⚖ PERBANDINGAN BERPASANGAN
+      </div>
+      <div class="card">
+        <div class="card-hdr">
+          <h2>Penilaian Bobot Indikator Potensi Surya</h2>
+          <p>
+            Bandingkan tingkat kepentingan relatif antar indikator potensi surya
+            (P1–P5) untuk menentukan bobot dalam penilaian kesesuaian lokasi
+            PLTS Terapung.
+          </p>
+        </div>
+
+        <div style="padding: 16px 22px">
+          <div
+            style="
+              font-size: 0.62rem;
+              font-weight: 700;
+              color: var(--muted);
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+              margin-bottom: 10px;
+            "
+          >
+            Indikator yang Dinilai
+          </div>
+          <table class="ind-table">
+            <thead>
+              <tr>
+                <th>Kode</th>
+                <th>Nama Indikator</th>
+                <th>Deskripsi</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="ind-code">P1</span></td>
+                <td style="font-weight: 600">PVOUT</td>
+                <td style="color: var(--muted); font-size: 0.72rem">
+                  Photovoltaic Power Output — estimasi energi listrik yang
+                  dihasilkan per satuan kapasitas (kWh/kWp). Mengintegrasikan
+                  semua faktor iklim secara komprehensif.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="ind-code">P2</span></td>
+                <td style="font-weight: 600">Iradiasi</td>
+                <td style="color: var(--muted); font-size: 0.72rem">
+                  Total energi matahari yang diterima permukaan horizontal per
+                  satuan luas (kWh/m²/tahun). Input utama pembangkitan energi
+                  surya.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="ind-code">P3</span></td>
+                <td style="font-weight: 600">Pengaruh Kondisi Meteorologi</td>
+                <td style="color: var(--muted); font-size: 0.72rem">
+                  Dampak variabel cuaca (tutupan awan, suhu, kelembaban,
+                  kecepatan angin) terhadap efisiensi dan keandalan PLTS.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="ind-code">P4</span></td>
+                <td style="font-weight: 600">Ramp Rate</td>
+                <td style="color: var(--muted); font-size: 0.72rem">
+                  Laju perubahan daya output PLTS (kW/menit). Nilai tinggi =
+                  fluktuasi besar, berimplikasi pada stabilitas grid dan
+                  kebutuhan BESS.
+                </td>
+              </tr>
+              <tr>
+                <td><span class="ind-code">P5</span></td>
+                <td style="font-weight: 600">Seasonal Index PVOUT</td>
+                <td style="color: var(--muted); font-size: 0.72rem">
+                  Indeks variabilitas produksi PVOUT antar musim. Nilai tinggi =
+                  produksi sangat musiman, berpengaruh pada keandalan pasokan
+                  sepanjang tahun.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-hint">
+          <b>Agar skor kepaduan (CR) hijau:</b> pastikan besaran penilaian Anda
+          proporsional. Contoh: jika
+          <em>A dinilai 3× lebih penting dari B</em> dan
+          <em>B dinilai 3× lebih penting dari C</em>, maka
+          <em>A vs C</em> sebaiknya sekitar <b>9×</b>. Gunakan
+          <b>✦ Isi otomatis</b> jika ingin sistem mengisi sisa baris secara
+          konsisten.
+        </div>
+
+        <div class="cr-bar">
+          <span class="cr-lbl">Kepaduan Penilaian (CR):</span>
+          <div class="cr-outer-wrap">
+            <div class="cr-outer">
+              <div class="cr-fill" id="cr-fill" style="width: 0%"></div>
+            </div>
+            <div class="cr-marker"></div>
+          </div>
+          <span class="cr-num" id="cr-num" style="color: var(--muted)">—</span>
+          <span class="cr-badge cr-empty" id="cr-badge">Belum diisi</span>
+          <span style="font-size: 0.62rem; color: var(--muted)"
+            >10 perbandingan</span
+          >
+        </div>
+
+        <div class="conflict-box" id="conflict-box">
+          <b>💡 Penilaian berikut perlu dicek ulang</b>
+          <div
+            id="conflict-list"
+            style="
+              margin-top: 6px;
+              font-size: 0.7rem;
+              font-weight: 400;
+              line-height: 1.8;
+              color: #7f1d1d;
+            "
+          ></div>
+        </div>
+
+        <div class="legend-bar">
+          <div class="leg-side left">◀ KIRI lebih penting</div>
+          <div class="leg-item ll"><span class="leg-num">9</span>Mutlak</div>
+          <div class="leg-item ll"><span class="leg-num">7</span>Sangat</div>
+          <div class="leg-item ll"><span class="leg-num">5</span>Cukup</div>
+          <div class="leg-item ll"><span class="leg-num">3</span>Sedikit</div>
+          <div class="leg-item eq"><span class="leg-num">1</span>Sama</div>
+          <div class="leg-item lr"><span class="leg-num">3</span>Sedikit</div>
+          <div class="leg-item lr"><span class="leg-num">5</span>Cukup</div>
+          <div class="leg-item lr"><span class="leg-num">7</span>Sangat</div>
+          <div class="leg-item lr"><span class="leg-num">9</span>Mutlak</div>
+          <div class="leg-side right">KANAN lebih penting ▶</div>
+        </div>
+
+        <div class="pw-wrap">
+          <div class="pw-hdr">
+            <span class="pw-title">Perbandingan Berpasangan</span>
+            <div style="display: flex; align-items: center; gap: 10px">
+              <button
+                class="btn-autofill"
+                id="btn-autofill"
+                onclick="autoFill()"
+              >
+                ✦ Isi otomatis sisa baris
+              </button>
+              <span class="pw-count-badge" id="pw-count">0 / 10 diisi</span>
+            </div>
+          </div>
+          <div id="pw-rows-wrap"></div>
+        </div>
+
+        <div class="weights-box">
+          <div class="wbox-hdr">
+            <span>Bobot Prioritas</span
+            ><span id="ws-status"
+              >Isi semua perbandingan untuk melihat bobot</span
+            >
+          </div>
+          <div id="weights-rows"></div>
+        </div>
+
+        <div class="expert-note-wrap">
+          <div class="expert-note-hdr">
+            <div class="enote-left">
+              <span style="font-size: 0.9rem">📝</span>
+              <div>
+                <div class="enote-title">Catatan / Insight Pakar</div>
+                <div class="enote-sub">
+                  Alasan penilaian, konteks khusus, atau ketidaksepakatan dengan
+                  nilai CR
+                </div>
+              </div>
+            </div>
+            <span class="enote-char" id="note-char">0 / 500</span>
+          </div>
+          <div class="expert-note-body">
+            <textarea
+              class="expert-note-textarea"
+              id="expert-note"
+              maxlength="500"
+              placeholder='Contoh: "Saya memberi nilai tinggi untuk PVOUT karena merupakan output akhir yang paling representatif..."'
+              oninput="onNote(this)"
+            ></textarea>
+          </div>
+          <div class="enote-footer">
+            💡 Catatan ini akan ditampilkan di PDF hasil penilaian
+          </div>
+        </div>
+
+        <div class="nav-bar">
+          <button class="btn-nav btn-reset" onclick="resetAll()">
+            ↺ Reset
+          </button>
+          <span class="nav-status" id="nav-status"
+            >Isi semua 10 perbandingan untuk mengunduh hasil</span
+          >
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              flex-wrap: wrap;
+              justify-content: flex-end;
+            "
+          >
+            <button
+              class="btn-nav btn-pdf"
+              id="btn-pdf"
+              onclick="downloadPDF()"
+              disabled
+            >
+              ⬇ Unduh PDF Hasil
+            </button>
+            <button
+              class="btn-drive"
+              id="btn-drive"
+              onclick="openDriveModal()"
+              disabled
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 87.3 78"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3L27.5 53H0c0 1.55.4 3.1 1.2 4.5L6.6 66.85z"
+                  fill="#0066DA"
+                />
+                <path
+                  d="M43.65 25L29.9 1.2C28.55.4 27 0 25.45 0c-1.55 0-3.1.4-4.5 1.2L6.6 11.15c-1.35.8-2.5 1.95-3.3 3.3L16.1 37.5h27.5V25z"
+                  fill="#00AC47"
+                />
+                <path
+                  d="M73.55 76.8c1.35-.8 2.5-1.95 3.3-3.3l1.6-2.75L86.1 57.5c.8-1.4 1.2-2.95 1.2-4.5H59.8L73.55 76.8z"
+                  fill="#EA4335"
+                />
+                <path
+                  d="M43.65 25v28.5H71.2L57.2 14.45c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25z"
+                  fill="#00832D"
+                />
+                <path
+                  d="M0 53.5c0 1.55.4 3.1 1.2 4.5l3.85 6.65 9.6 9.95c1.35.8 2.9 1.2 4.45 1.2H27.5L43.65 53.5H0z"
+                  fill="#2684FC"
+                />
+                <path
+                  d="M43.65 25H16.1l9.35-23.8c1.35-.8 2.9-1.2 4.45-1.2 1.55 0 3.1.4 4.5 1.2l9.25 23.8z"
+                  fill="#00AC47"
+                />
+              </svg>
+              Kirim
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <!-- GOOGLE DRIVE MODAL (sama persis dengan HTML referensi) -->
+    <div class="modal-overlay" id="drive-modal">
+      <div class="modal-box">
+        <div class="modal-hdr">
+          <div>
+            <h3>📤 Kirim Hasil ke Google Drive</h3>
+            <p>
+              PDF hasil penilaian AHP akan dikirim langsung ke folder Google
+              Drive penelitian
+            </p>
+          </div>
+          <button class="modal-close" onclick="closeDriveModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <div
+            style="
+              display: flex;
+              gap: 12px;
+              padding: 14px 16px;
+              border-radius: 10px;
+              background: #eff6ff;
+              border: 1.5px solid #bfdbfe;
+              margin-bottom: 16px;
+            "
+          >
+            <div style="font-size: 1.4rem; flex-shrink: 0">📁</div>
+            <div>
+              <div
+                style="
+                  font-weight: 700;
+                  font-size: 0.82rem;
+                  color: #1e3a5f;
+                  margin-bottom: 4px;
+                "
+              >
+                Terhubung ke Google Drive
+              </div>
+              <div style="font-size: 0.73rem; color: #3b5f8a; line-height: 1.6">
+                File PDF akan tersimpan otomatis ke folder
+                <b>PLTS Terapung — AHP Responses</b>.<br />Tidak diperlukan
+                login — cukup klik tombol kirim di bawah.
+              </div>
+            </div>
+          </div>
+          <div
+            style="
+              padding: 11px 14px;
+              border-radius: 8px;
+              background: #f8faff;
+              border: 1px solid #e0eaff;
+              font-size: 0.75rem;
+              color: #374151;
+              margin-bottom: 16px;
+            "
+            id="modal-identity-preview"
+          >
+            Memuat data pengisi...
+          </div>
+          <div id="drive-send-status" class="drive-status"></div>
+          <div
+            style="
+              display: flex;
+              gap: 10px;
+              margin-top: 12px;
+              justify-content: flex-end;
+            "
+          >
+            <button
+              class="btn-nav btn-reset"
+              onclick="closeDriveModal()"
+              style="font-size: 0.75rem; padding: 8px 16px"
+            >
+              Batal
+            </button>
+            <button
+              class="btn-drive"
+              id="btn-do-send"
+              onclick="sendToDrive()"
+              style="font-size: 0.75rem; padding: 8px 18px"
+            >
+              <svg
+                width="16"
+                height="16"
+                viewBox="0 0 87.3 78"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3L27.5 53H0c0 1.55.4 3.1 1.2 4.5L6.6 66.85z"
+                  fill="#0066DA"
+                />
+                <path
+                  d="M43.65 25L29.9 1.2C28.55.4 27 0 25.45 0c-1.55 0-3.1.4-4.5 1.2L6.6 11.15c-1.35.8-2.5 1.95-3.3 3.3L16.1 37.5h27.5V25z"
+                  fill="#00AC47"
+                />
+                <path
+                  d="M73.55 76.8c1.35-.8 2.5-1.95 3.3-3.3l1.6-2.75L86.1 57.5c.8-1.4 1.2-2.95 1.2-4.5H59.8L73.55 76.8z"
+                  fill="#EA4335"
+                />
+                <path
+                  d="M43.65 25v28.5H71.2L57.2 14.45c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25z"
+                  fill="#00832D"
+                />
+                <path
+                  d="M0 53.5c0 1.55.4 3.1 1.2 4.5l3.85 6.65 9.6 9.95c1.35.8 2.9 1.2 4.45 1.2H27.5L43.65 53.5H0z"
+                  fill="#2684FC"
+                />
+                <path
+                  d="M43.65 25H16.1l9.35-23.8c1.35-.8 2.9-1.2 4.45-1.2 1.55 0 3.1.4 4.5 1.2l9.25 23.8z"
+                  fill="#00AC47"
+                />
+              </svg>
+              Kirim
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /* ═══════════════════════════════════
+   DATA & CONSTANTS
+═══════════════════════════════════ */
+      const VARS = [
+        {
+          code: "P1",
+          name: "PVOUT",
+          desc: "Photovoltaic Power Output (kWh/kWp)",
+        },
+        {
+          code: "P2",
+          name: "Iradiasi",
+          desc: "Total iradiasi horizontal (kWh/m²/thn)",
+        },
+        {
+          code: "P3",
+          name: "Pengaruh Kondisi Meteorologi",
+          desc: "Dampak cuaca terhadap efisiensi PLTS",
+        },
+        {
+          code: "P4",
+          name: "Ramp Rate",
+          desc: "Laju perubahan daya output (kW/menit)",
+        },
+        {
+          code: "P5",
+          name: "Seasonal Index PVOUT",
+          desc: "Variabilitas produksi antar musim",
+        },
+      ];
+      const OPTS = [9, 7, 5, 3, 1, 3, 5, 7, 9];
+      const RI = {
+        1: 0,
+        2: 0,
+        3: 0.58,
+        4: 0.9,
+        5: 1.12,
+        6: 1.24,
+        7: 1.32,
+        8: 1.41,
+        9: 1.45,
+      };
+      const SAATY = [1 / 9, 1 / 7, 1 / 5, 1 / 3, 1, 3, 5, 7, 9];
+      const N = VARS.length; // 5
+      const TOTAL = (N * (N - 1)) / 2; // 10
+
+      // Apps Script URL — sama persis dengan HTML referensi
+      const APPS_SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbza6ffgTMoOXU12Tg3Tth-nFwpzzyJYHJgaDUzLyXqFoSK_MrC9bV3YW5eEYs5Uj4Pc9w/exec";
+
+      const state = { identity: {}, pairs: {}, note: "" };
+
+      function allPairs() {
+        const a = [];
+        for (let i = 0; i < N; i++)
+          for (let j = i + 1; j < N; j++) a.push([i, j]);
+        return a;
+      }
+      const PAIRS = allPairs();
+
+      /* ═══════════════════════════════════
+   AHP ENGINE
+═══════════════════════════════════ */
+      function calcAHP(pairsObj) {
+        const pr = pairsObj || state.pairs;
+        const M = Array.from({ length: N }, () => Array(N).fill(1));
+        PAIRS.forEach(([i, j]) => {
+          const v = pr[`${i}_${j}`];
+          if (v !== undefined) {
+            M[i][j] = v;
+            M[j][i] = 1 / v;
+          }
+        });
+        const cs = Array(N).fill(0);
+        for (let j = 0; j < N; j++)
+          for (let i = 0; i < N; i++) cs[j] += M[i][j];
+        const nm = M.map((r, i) => r.map((v, j) => v / cs[j]));
+        const w = nm.map((r) => r.reduce((a, b) => a + b, 0) / N);
+        const Aw = Array(N).fill(0);
+        for (let i = 0; i < N; i++)
+          for (let j = 0; j < N; j++) Aw[i] += M[i][j] * w[j];
+        const lm = Aw.reduce((s, v, i) => s + v / w[i], 0) / N;
+        const ci = (lm - N) / (N - 1),
+          ri = RI[N] || 1.49,
+          CR = ri ? ci / ri : 0;
+        return { w, CR };
+      }
+      function doneCount() {
+        return Object.keys(state.pairs).length;
+      }
+
+      /* ═══════════════════════════════════
+   SNAP TO NEAREST SAATY
+═══════════════════════════════════ */
+      function snapSaaty(ratio) {
+        if (!ratio || !isFinite(ratio) || ratio <= 0) return 1;
+        let best = 1,
+          bestDiff = Infinity;
+        SAATY.forEach((s) => {
+          const d = Math.abs(Math.log(ratio) - Math.log(s));
+          if (d < bestDiff) {
+            bestDiff = d;
+            best = s;
+          }
+        });
+        return best;
+      }
+
+      /* ═══════════════════════════════════
+   SNAP TO NEAREST SAATY (skip 1 unless ratio truly ≈ 1)
+   Biases away from 1 to produce more varied results.
+═══════════════════════════════════ */
+      function snapSaaty(ratio) {
+        if (!ratio || !isFinite(ratio) || ratio <= 0) return 3;
+        // Only return 1 if ratio is extremely close to 1 (within ±15% in log)
+        if (Math.abs(Math.log(ratio)) < 0.14) return 3; // push to 3 instead of 1
+        let best = 3,
+          bestDiff = Infinity;
+        SAATY.forEach((s) => {
+          if (s === 1) return; // skip 1 entirely — let user decide if truly equal
+          const d = Math.abs(Math.log(ratio) - Math.log(s));
+          if (d < bestDiff) {
+            bestDiff = d;
+            best = s;
+          }
+        });
+        return best;
+      }
+
+      /* ═══════════════════════════════════
+   AUTO FILL — Transitive Chain Multiplication
+   Pure method: derive every missing pair by
+   multiplying ratios along the shortest chain
+   of already-filled comparisons.
+   e.g. a(i,j) = a(i,k) × a(k,j)
+   If multiple chains exist, use geometric mean
+   of all derived values for that pair.
+   Missing pairs with no chain: use geometric
+   mean of all known row/col ratios as fallback.
+═══════════════════════════════════ */
+
+      /* Get direct ratio a(i→j) from filled pairs, or null */
+      function directRatio(i, j, pr) {
+        if (i === j) return 1;
+        if (pr[`${i}_${j}`] !== undefined) return pr[`${i}_${j}`];
+        if (pr[`${j}_${i}`] !== undefined) return 1 / pr[`${j}_${i}`];
+        return null;
+      }
+
+      /* Collect ALL chain-derived estimates for pair (i,j)
+   via every possible 1-hop and 2-hop intermediate */
+      function chainEstimates(i, j, pr) {
+        const estimates = [];
+        // Direct
+        const d = directRatio(i, j, pr);
+        if (d !== null) {
+          estimates.push(d);
+          return estimates;
+        }
+        // 1-hop: i→k→j
+        for (let k = 0; k < N; k++) {
+          if (k === i || k === j) continue;
+          const ik = directRatio(i, k, pr);
+          const kj = directRatio(k, j, pr);
+          if (ik !== null && kj !== null) estimates.push(ik * kj);
+        }
+        // 2-hop: i→k1→k2→j  (only if no 1-hop found, to avoid over-diluting)
+        if (estimates.length === 0) {
+          for (let k1 = 0; k1 < N; k1++) {
+            if (k1 === i || k1 === j) continue;
+            const ik1 = directRatio(i, k1, pr);
+            if (ik1 === null) continue;
+            for (let k2 = 0; k2 < N; k2++) {
+              if (k2 === i || k2 === j || k2 === k1) continue;
+              const k1k2 = directRatio(k1, k2, pr);
+              const k2j = directRatio(k2, j, pr);
+              if (k1k2 !== null && k2j !== null)
+                estimates.push(ik1 * k1k2 * k2j);
+            }
+          }
+        }
+        return estimates;
+      }
+
+      /* Geometric mean of an array of positive numbers */
+      function geoMean(arr) {
+        if (arr.length === 0) return null;
+        const s = arr.reduce((a, v) => a + Math.log(v), 0);
+        return Math.exp(s / arr.length);
+      }
+
+      function autoFill() {
+        const pr = state.pairs;
+        if (doneCount() === 0) {
+          showToast("Isi minimal satu perbandingan terlebih dahulu");
+          return;
+        }
+
+        const missing = PAIRS.filter(([i, j]) => pr[`${i}_${j}`] === undefined);
+        if (missing.length === 0) {
+          showToast("Semua baris sudah terisi");
+          return;
+        }
+
+        // Multi-pass: keep deriving until no new pair can be filled
+        let filled = 0;
+        for (let pass = 0; pass < N + 1; pass++) {
+          let newThisPass = 0;
+          PAIRS.forEach(([i, j]) => {
+            if (pr[`${i}_${j}`] !== undefined) return;
+            const estimates = chainEstimates(i, j, pr);
+            if (estimates.length === 0) return;
+            const ratio = geoMean(estimates);
+            pr[`${i}_${j}`] = snapSaaty(ratio);
+            refreshBtns(i, j);
+            filled++;
+            newThisPass++;
+          });
+          if (newThisPass === 0) break;
+        }
+
+        // Fallback for any still-disconnected pairs:
+        // Build a pseudo-weight per variable from all known ratios in its row
+        const stillMissing = PAIRS.filter(
+          ([i, j]) => pr[`${i}_${j}`] === undefined,
+        );
+        if (stillMissing.length > 0) {
+          // Estimate log-weight for each variable from known comparisons
+          const logW = Array(N).fill(0);
+          const cnt = Array(N).fill(0);
+          PAIRS.forEach(([i, j]) => {
+            const v = pr[`${i}_${j}`];
+            if (v === undefined) return;
+            logW[i] += Math.log(v);
+            cnt[i]++;
+            logW[j] -= Math.log(v);
+            cnt[j]++;
+          });
+          // Nodes with no connections get average
+          const avgLog =
+            logW.reduce((a, b) => a + b, 0) /
+            (cnt.reduce((a, b) => a + b, 0) || 1);
+          for (let k = 0; k < N; k++)
+            if (cnt[k] === 0) {
+              logW[k] = avgLog;
+            } else logW[k] /= cnt[k];
+
+          stillMissing.forEach(([i, j]) => {
+            const ratio = Math.exp(logW[i] - logW[j]);
+            pr[`${i}_${j}`] = snapSaaty(ratio);
+            refreshBtns(i, j);
+            filled++;
+          });
+        }
+
+        recalcSec();
+        const { CR } = calcAHP();
+        const crMsg =
+          CR < 0.1
+            ? `CR = ${CR.toFixed(3)} ✓ Konsisten`
+            : `CR = ${CR.toFixed(3)} — coba sesuaikan manual`;
+        showToast(`✦ ${filled} baris diisi · ${crMsg}`);
+      }
+
+      /* ═══════════════════════════════════
+   BUILD UI
+═══════════════════════════════════ */
+      function buildUI() {
+        document.getElementById("pw-rows-wrap").innerHTML = PAIRS.map(
+          ([i, j]) => `
+    <div class="pw-row" id="prow-${i}-${j}">
+      <div><div class="vname">${VARS[i].name}</div><div class="vcode">${VARS[i].code}</div></div>
+      <div class="btns">
+        ${OPTS.map(
+          (
+            v,
+            k,
+          ) => `<button class="sb ${k < 4 ? "sl" : k === 4 ? "eq" : "sr"}" id="b-${i}-${j}-${k}"
+          onclick="onPair(${i},${j},${k})"
+          onmouseenter="hintCR(${i},${j},${k},this)"
+          onmouseleave="clearHint(${i},${j})"
+          title="${k < 4 ? VARS[i].name + " " + v + "× lebih penting" : k === 4 ? "Sama penting" : VARS[j].name + " " + v + "× lebih penting"}"
+        >${k === 4 ? "1" : v}</button>`,
+        ).join("")}
+      </div>
+      <div><div class="vname right">${VARS[j].name}</div><div class="vcode right">${VARS[j].code}</div></div>
+    </div>`,
+        ).join("");
+
+        document.getElementById("weights-rows").innerHTML = VARS.map(
+          (_, k) => `
+    <div class="w-row" id="wr-${k}">
+      <div class="w-rnk" id="wrnk-${k}">—</div>
+      <div class="w-name">${VARS[k].name}<span class="w-code">${VARS[k].code}</span></div>
+      <div class="w-bwrap"><div class="w-bfill" id="wb-${k}" style="width:0%"></div></div>
+      <div class="w-pct" id="wp-${k}">—%</div>
+    </div>`,
+        ).join("");
+      }
+
+      /* ═══════════════════════════════════
+   PAIR INTERACTION
+═══════════════════════════════════ */
+      function onPair(i, j, k) {
+        const v = OPTS[k];
+        const mv = k < 4 ? v : k === 4 ? 1 : 1 / v;
+        const key = `${i}_${j}`;
+        const prev = state.pairs[key];
+        const same =
+          prev !== undefined &&
+          ((k < 4 && Math.abs(prev - v) < 0.001) ||
+            (k === 4 && prev === 1) ||
+            (k > 4 && Math.abs(prev - 1 / v) < 0.001));
+        if (same) delete state.pairs[key];
+        else state.pairs[key] = mv;
+        refreshBtns(i, j);
+        recalcSec();
+      }
+
+      function refreshBtns(i, j) {
+        const v = state.pairs[`${i}_${j}`];
+        for (let k = 0; k < 9; k++) {
+          const b = document.getElementById(`b-${i}-${j}-${k}`);
+          if (!b) continue;
+          b.classList.remove("sel-l", "sel-r", "sl", "sr");
+          const bv = OPTS[k];
+          if (v === undefined) {
+            if (k < 4) b.classList.add("sl");
+            else if (k > 4) b.classList.add("sr");
+          } else {
+            if (k < 4 && Math.abs(v - bv) < 0.001) b.classList.add("sel-l");
+            else if (k === 4 && v === 1) b.classList.add("sel-l");
+            else if (k > 4 && Math.abs(v - 1 / bv) < 0.001)
+              b.classList.add("sel-r");
+            else if (k < 4) b.classList.add("sl");
+            else if (k > 4) b.classList.add("sr");
+          }
+        }
+      }
+
+      /* ═══════════════════════════════════
+   CR HOVER HINT
+═══════════════════════════════════ */
+      function hintCR(i, j, k, el) {
+        const v = OPTS[k];
+        const mv = k < 4 ? v : k === 4 ? 1 : 1 / v;
+        const tmpPr = { ...state.pairs, [`${i}_${j}`]: mv };
+        const { CR: cr } = calcAHP(tmpPr);
+        for (let kk = 0; kk < 9; kk++) {
+          const b = document.getElementById(`b-${i}-${j}-${kk}`);
+          if (b) b.classList.remove("hint-ok", "hint-warn", "hint-bad");
+        }
+        if (cr < 0.1) el.classList.add("hint-ok");
+        else if (cr < 0.15) el.classList.add("hint-warn");
+        else el.classList.add("hint-bad");
+        el.title = `CR → ${cr.toFixed(3)} ${cr < 0.1 ? "✓ Aman" : cr < 0.15 ? "⚠ Mendekati batas" : "✗ Akan menaikkan CR"}`;
+      }
+      function clearHint(i, j) {
+        for (let k = 0; k < 9; k++) {
+          const b = document.getElementById(`b-${i}-${j}-${k}`);
+          if (!b) continue;
+          b.classList.remove("hint-ok", "hint-warn", "hint-bad");
+          const v = OPTS[k];
+          b.title =
+            k < 4
+              ? VARS[i].name + " " + v + "× lebih penting"
+              : k === 4
+                ? "Sama penting"
+                : VARS[j].name + " " + v + "× lebih penting";
+        }
+      }
+
+      /* ═══════════════════════════════════
+   RECALC UI
+═══════════════════════════════════ */
+      function recalcSec() {
+        const done = doneCount();
+        document.getElementById("prog-lbl").textContent =
+          `${done} / ${TOTAL} diisi`;
+        document.getElementById("prog-fill").style.width =
+          Math.round((done / TOTAL) * 100) + "%";
+        document.getElementById("pw-count").textContent =
+          `${done} / ${TOTAL} diisi`;
+        const af = document.getElementById("btn-autofill");
+        if (done > 0 && done < TOTAL) af.classList.add("visible");
+        else af.classList.remove("visible");
+
+        const fill = document.getElementById("cr-fill");
+        const num = document.getElementById("cr-num");
+        const badge = document.getElementById("cr-badge");
+
+        if (done === 0) {
+          fill.style.width = "0%";
+          fill.style.background = "var(--green)";
+          num.textContent = "—";
+          num.style.color = "var(--muted)";
+          badge.className = "cr-badge cr-empty";
+          badge.textContent = "Belum diisi";
+          document.getElementById("ws-status").textContent =
+            "Isi semua perbandingan untuk melihat bobot";
+          VARS.forEach((_, k) => {
+            document.getElementById(`wp-${k}`).textContent = "—%";
+            document.getElementById(`wb-${k}`).style.width = "0%";
+            document.getElementById(`wrnk-${k}`).textContent = "—";
+          });
+          updateConflicts();
+          return;
+        }
+
+        const { w, CR } = calcAHP();
+        const crPct = Math.min((CR / 0.3) * 100, 100);
+        fill.style.width = crPct + "%";
+        num.textContent = CR.toFixed(3);
+
+        if (done < TOTAL) {
+          fill.style.background = "var(--blue)";
+          num.style.color = "var(--blue)";
+          badge.className = "cr-badge cr-partial";
+          badge.textContent = `${done}/${TOTAL} diisi`;
+        } else if (CR < 0.1) {
+          fill.style.background = "var(--green)";
+          num.style.color = "var(--green)";
+          badge.className = "cr-badge cr-ok";
+          badge.textContent = "Penilaian cukup padu ✓";
+        } else if (CR < 0.15) {
+          fill.style.background = "var(--amber)";
+          num.style.color = "var(--amber)";
+          badge.className = "cr-badge cr-near";
+          badge.textContent = "Perlu sedikit penyesuaian";
+        } else {
+          fill.style.background = "var(--red)";
+          num.style.color = "var(--red)";
+          badge.className = "cr-badge cr-bad";
+          badge.textContent = "Penilaian perlu dicek ulang";
+        }
+
+        const ranked = w
+          .map((wt, i) => ({ i, wt }))
+          .sort((a, b) => b.wt - a.wt);
+        const rankOf = Array(N);
+        ranked.forEach((r, k) => (rankOf[r.i] = k + 1));
+        for (let k = 0; k < N; k++) {
+          document.getElementById(`wb-${k}`).style.width =
+            Math.min(w[k] * N * 100, 100) + "%";
+          document.getElementById(`wp-${k}`).textContent =
+            (w[k] * 100).toFixed(1) + "%";
+          document.getElementById(`wrnk-${k}`).textContent = rankOf[k];
+        }
+        document.getElementById("ws-status").textContent =
+          done < TOTAL
+            ? `Sementara (${done}/${TOTAL})`
+            : `CR = ${CR.toFixed(3)} ${CR < 0.1 ? "— Penilaian cukup padu ✓" : "— Perlu dicek ulang"}`;
+
+        const complete = done === TOTAL;
+        document.getElementById("btn-pdf").disabled = !complete;
+        document.getElementById("btn-drive").disabled = !complete;
+        document.getElementById("nav-status").textContent = complete
+          ? `✓ Semua ${TOTAL} perbandingan terisi · CR = ${CR.toFixed(3)}`
+          : `Isi semua ${TOTAL} perbandingan untuk mengunduh (${TOTAL - done} tersisa)`;
+        updateConflicts();
+      }
+
+      /* ═══════════════════════════════════
+   CONFLICTS
+═══════════════════════════════════ */
+      function findConflicts() {
+        const cs = new Set();
+        const pr = state.pairs;
+        const dom = (a, b) => {
+          const k = a < b ? `${a}_${b}` : `${b}_${a}`;
+          const v = pr[k];
+          if (v === undefined) return 0;
+          if (a < b) return v > 1 ? 1 : v < 1 ? -1 : 0;
+          return v > 1 ? -1 : v < 1 ? 1 : 0;
+        };
+        for (let a = 0; a < N; a++)
+          for (let b = 0; b < N; b++)
+            for (let c = 0; c < N; c++) {
+              if (a === b || b === c || a === c) continue;
+              if (dom(a, b) === 1 && dom(b, c) === 1 && dom(a, c) === -1) {
+                [
+                  a < b ? `${a}_${b}` : `${b}_${a}`,
+                  b < c ? `${b}_${c}` : `${c}_${b}`,
+                  a < c ? `${a}_${c}` : `${c}_${a}`,
+                ].forEach((k) => cs.add(k));
+              }
+            }
+        return cs;
+      }
+      function updateConflicts() {
+        const pr = state.pairs;
+        const cs = findConflicts();
+        PAIRS.forEach(([i, j]) => {
+          const row = document.getElementById(`prow-${i}-${j}`);
+          const key = `${i}_${j}`;
+          row.classList.remove("conflict", "answered");
+          if (cs.has(key)) row.classList.add("conflict");
+          else if (pr[key] !== undefined) row.classList.add("answered");
+        });
+        const cbox = document.getElementById("conflict-box");
+        const clist = document.getElementById("conflict-list");
+        if (cs.size === 0) {
+          cbox.classList.remove("show");
+          return;
+        }
+        const dom = (a, b) => {
+          const k = a < b ? `${a}_${b}` : `${b}_${a}`;
+          const v = pr[k];
+          if (v === undefined) return 0;
+          if (a < b) return v > 1 ? 1 : v < 1 ? -1 : 0;
+          return v > 1 ? -1 : v < 1 ? 1 : 0;
+        };
+        const cycles = [];
+        const seen = new Set();
+        for (let a = 0; a < N; a++)
+          for (let b = 0; b < N; b++)
+            for (let c = 0; c < N; c++) {
+              if (a === b || b === c || a === c) continue;
+              if (dom(a, b) === 1 && dom(b, c) === 1 && dom(a, c) === -1) {
+                const ck = [a, b, c].sort().join("_");
+                if (!seen.has(ck)) {
+                  seen.add(ck);
+                  cycles.push([a, b, c]);
+                }
+              }
+            }
+        cbox.classList.add("show");
+        clist.innerHTML = cycles
+          .slice(0, 5)
+          .map(
+            ([a, b, c]) =>
+              `• <b>${VARS[a].code}</b> (${VARS[a].name}) lebih penting dari <b>${VARS[b].code}</b>, <b>${VARS[b].code}</b> lebih penting dari <b>${VARS[c].code}</b>, namun <b>${VARS[c].code}</b> dinilai lebih penting dari <b>${VARS[a].code}</b>`,
+          )
+          .join("<br>");
+      }
+
+      /* ═══════════════════════════════════
+   IDENTITY & NOTE
+═══════════════════════════════════ */
+      function updateId() {
+        state.identity = {
+          nama: document.getElementById("f-nama").value,
+          divisi: document.getElementById("f-div").value,
+          jabatan: document.getElementById("f-jab").value,
+          tanggal: document.getElementById("f-tgl").value,
+          email: document.getElementById("f-email").value,
+          wa: document.getElementById("f-wa").value,
+          bank: document.getElementById("f-bank").value,
+          rekening: document.getElementById("f-rekening").value,
+        };
+      }
+      function onNote(el) {
+        state.note = el.value;
+        const len = el.value.length;
+        const c = document.getElementById("note-char");
+        c.textContent = `${len} / 500`;
+        c.className = "enote-char" + (len > 450 ? " warn" : "");
+      }
+
+      /* ═══════════════════════════════════
+   RESET
+═══════════════════════════════════ */
+      function resetAll() {
+        if (
+          !confirm("Reset semua penilaian? Data yang sudah diisi akan hilang.")
+        )
+          return;
+        for (const k in state.pairs) delete state.pairs[k];
+        state.note = "";
+        document.getElementById("expert-note").value = "";
+        document.getElementById("note-char").textContent = "0 / 500";
+        PAIRS.forEach(([i, j]) => {
+          document
+            .getElementById(`prow-${i}-${j}`)
+            .classList.remove("answered", "conflict");
+          OPTS.forEach((_, k) =>
+            document
+              .getElementById(`b-${i}-${j}-${k}`)
+              .classList.remove("sel-l", "sel-r"),
+          );
+        });
+        recalcSec();
+        showToast("↺ Semua penilaian direset");
+      }
+
+      /* ═══════════════════════════════════
+   TOAST
+═══════════════════════════════════ */
+      let toastT;
+      function showToast(msg) {
+        const t = document.getElementById("toast");
+        t.textContent = msg;
+        t.classList.add("show");
+        clearTimeout(toastT);
+        toastT = setTimeout(() => t.classList.remove("show"), 3000);
+      }
+
+      /* ═══════════════════════════════════
+   GOOGLE DRIVE — sama persis logika referensi
+═══════════════════════════════════ */
+      function openDriveModal() {
+        const modal = document.getElementById("drive-modal");
+        modal.classList.add("open");
+        const ss = document.getElementById("drive-send-status");
+        ss.className = "drive-status";
+        ss.style.display = "none";
+        const id = state.identity;
+        const prev = document.getElementById("modal-identity-preview");
+        if (prev) {
+          const nama = id.nama || "—",
+            divisi = id.divisi || "—",
+            jabatan = id.jabatan || "—",
+            tgl = id.tanggal || new Date().toISOString().slice(0, 10),
+            bank = id.bank || "—",
+            rekening = id.rekening || "—";
+          prev.innerHTML = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px">
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Nama</span><div style="font-weight:600;color:#111827;margin-top:2px">${nama}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Divisi</span><div style="font-weight:600;color:#111827;margin-top:2px">${divisi}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Jabatan</span><div style="font-weight:600;color:#111827;margin-top:2px">${jabatan}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Tanggal</span><div style="font-weight:600;color:#111827;margin-top:2px">${tgl}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">Bank</span><div style="font-weight:600;color:#111827;margin-top:2px">${bank}</div></div>
+      <div><span style="font-size:.63rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.4px">No. Rekening</span><div style="font-weight:600;color:#111827;margin-top:2px">${rekening}</div></div>
+    </div>`;
+        }
+        const btn = document.getElementById("btn-do-send");
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove("loading");
+          btn.innerHTML = driveIconBtn("Kirim");
+        }
+      }
+      function closeDriveModal() {
+        document.getElementById("drive-modal").classList.remove("open");
+      }
+      document
+        .getElementById("drive-modal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) closeDriveModal();
+        });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeDriveModal();
+      });
+
+      function driveIconBtn(label) {
+        return `<svg width="16" height="16" viewBox="0 0 87.3 78" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6.6 66.85l3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3L27.5 53H0c0 1.55.4 3.1 1.2 4.5L6.6 66.85z" fill="#0066DA"/><path d="M43.65 25L29.9 1.2C28.55.4 27 0 25.45 0c-1.55 0-3.1.4-4.5 1.2L6.6 11.15c-1.35.8-2.5 1.95-3.3 3.3L16.1 37.5h27.5V25z" fill="#00AC47"/><path d="M73.55 76.8c1.35-.8 2.5-1.95 3.3-3.3l1.6-2.75L86.1 57.5c.8-1.4 1.2-2.95 1.2-4.5H59.8L73.55 76.8z" fill="#EA4335"/><path d="M43.65 25v28.5H71.2L57.2 14.45c-.8-1.4-1.95-2.5-3.3-3.3L43.65 25z" fill="#00832D"/><path d="M0 53.5c0 1.55.4 3.1 1.2 4.5l3.85 6.65 9.6 9.95c1.35.8 2.9 1.2 4.45 1.2H27.5L43.65 53.5H0z" fill="#2684FC"/><path d="M43.65 25H16.1l9.35-23.8c1.35-.8 2.9-1.2 4.45-1.2 1.55 0 3.1.4 4.5 1.2l9.25 23.8z" fill="#00AC47"/></svg> ${label}`;
+      }
+
+      async function sendToDrive() {
+        const btn = document.getElementById("btn-do-send");
+        const st = document.getElementById("drive-send-status");
+        btn.disabled = true;
+        btn.classList.add("loading");
+        btn.innerHTML = '<span class="spin"></span> Membuat PDF & mengirim...';
+        st.className = "drive-status sending";
+        st.innerHTML =
+          '<span class="spin"></span><span>Membuat PDF, harap tunggu...</span>';
+        st.style.display = "flex";
+        try {
+          const base64pdf = await generatePDFBase64();
+          const id = state.identity;
+          const nama = (id.nama || "Responden").replace(/\s+/g, "_");
+          const tgl = id.tanggal || new Date().toISOString().slice(0, 10);
+          const filename = `AHP_IndikatorSurya_${nama}_${tgl}.pdf`;
+          st.innerHTML =
+            '<span class="spin"></span><span>Mengirim ke Google Drive...</span>';
+          const resp = await fetch(APPS_SCRIPT_URL, {
+            method: "POST",
+            body: JSON.stringify({ pdf: base64pdf, filename }),
+            headers: { "Content-Type": "text/plain" },
+          });
+          const json = await resp.json();
+          if (json.ok) {
+            st.className = "drive-status ok";
+            st.innerHTML = `<span>✓</span><span>File <b>${filename}</b> berhasil dikirim ke Google Drive!</span>`;
+            showToast("PDF berhasil dikirim ke Google Drive ✓");
+          } else {
+            throw new Error(json.error || "Apps Script mengembalikan error");
+          }
+        } catch (err) {
+          st.className = "drive-status err";
+          st.innerHTML = `<span>✗</span><span>Gagal mengirim: ${err.message}. Pastikan URL Apps Script benar dan deployment sudah aktif.</span>`;
+          showToast("Gagal kirim ke Drive — cek status di modal");
+        } finally {
+          btn.disabled = false;
+          btn.classList.remove("loading");
+          btn.innerHTML = driveIconBtn("Kirim");
+        }
+      }
+
+      /* ═══════════════════════════════════
+   PDF SHARED BUILDER
+═══════════════════════════════════ */
+      function buildPDFDoc(jsPDF) {
+        const doc = new jsPDF({
+          orientation: "portrait",
+          unit: "mm",
+          format: "a4",
+        });
+        const W = doc.internal.pageSize.getWidth();
+        const id = state.identity;
+        const nama = id.nama || "Responden";
+        const tgl = id.tanggal || new Date().toISOString().slice(0, 10);
+        const { w, CR } = calcAHP();
+        let y = 0;
+
+        // Header
+        doc.setFillColor(11, 30, 61);
+        doc.rect(0, 0, W, 26, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(13);
+        doc.setFont("helvetica", "bold");
+        doc.text("AHP — Indikator Potensi Surya PLTS Terapung", 14, 12);
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica", "normal");
+        doc.text("PT PLN (Persero) · Penilaian Bobot Indikator", 14, 19.5);
+        doc.setFillColor(230, 168, 23);
+        doc.rect(0, 23, W, 3, "F");
+        y = 34;
+
+        // Identity
+        doc.setTextColor(11, 30, 61);
+        doc.setFontSize(9.5);
+        doc.setFont("helvetica", "bold");
+        doc.text("DATA DIRI RESPONDEN", 14, y);
+        y += 6;
+        doc.setFontSize(8);
+        doc.setFont("helvetica", "normal");
+        doc.setTextColor(40, 40, 40);
+        [
+          [`Nama: ${id.nama || "—"}`, `Divisi: ${id.divisi || "—"}`],
+          [`Jabatan: ${id.jabatan || "—"}`, `Tanggal: ${tgl}`],
+          [`Email: ${id.email || "—"}`, `WhatsApp: ${id.wa || "—"}`],
+          [`Bank: ${id.bank || "—"}`, `No. Rekening: ${id.rekening || "—"}`],
+        ].forEach((row) => {
+          row.forEach((t, i) => doc.text(t, 14 + i * 95, y));
+          y += 5.5;
+        });
+        y += 7;
+
+        // Section header
+        doc.setFillColor(27, 91, 255);
+        doc.roundedRect(10, y, W - 20, 10, 2, 2, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(9);
+        doc.setFont("helvetica", "bold");
+        doc.text("BOBOT INDIKATOR POTENSI SURYA", 14, y + 7);
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica", "normal");
+        doc.text(
+          `CR = ${CR.toFixed(3)}  ${CR < 0.1 ? "✓ Konsisten" : "⚠ Perlu dicek"}`,
+          W - 14,
+          y + 7,
+          { align: "right" },
+        );
+        y += 15;
+
+        // Weight table
+        doc.setFillColor(11, 30, 61);
+        doc.rect(10, y, W - 20, 7, "F");
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(7);
+        doc.setFont("helvetica", "bold");
+        doc.text("Rank", 14, y + 4.8);
+        doc.text("Kode", 28, y + 4.8);
+        doc.text("Indikator", 44, y + 4.8);
+        doc.text("Bobot (%)", W - 14, y + 4.8, { align: "right" });
+        y += 7;
+        const sorted = [...w.map((v, k) => ({ v, k }))].sort(
+          (a, b) => b.v - a.v,
+        );
+        sorted.forEach(({ v: wv, k }, rank) => {
+          const bg =
+            rank === 0
+              ? [255, 249, 196]
+              : rank === 1
+                ? [245, 245, 245]
+                : rank === 2
+                  ? [255, 243, 224]
+                  : [250, 251, 253];
+          doc.setFillColor(...bg);
+          doc.rect(10, y, W - 20, 9, "F");
+          doc.setDrawColor(220, 225, 235);
+          doc.rect(10, y, W - 20, 9, "S");
+          doc.setTextColor(30, 30, 30);
+          doc.setFontSize(7.5);
+          doc.setFont("helvetica", "normal");
+          doc.text(String(rank + 1), 15.5, y + 6);
+          doc.text(VARS[k].code, 28, y + 6);
+          doc.text(doc.splitTextToSize(VARS[k].name, 100)[0], 44, y + 6);
+          doc.setFont("helvetica", "bold");
+          doc.setTextColor(27, 91, 255);
+          doc.text((wv * 100).toFixed(2) + "%", W - 14, y + 6, {
+            align: "right",
+          });
+          y += 9;
+        });
+        y += 7;
+
+        // Matrix
+        if (y > 230) {
+          doc.addPage();
+          y = 14;
+        }
+        doc.setTextColor(100, 116, 139);
+        doc.setFontSize(7.5);
+        doc.setFont("helvetica", "bold");
+        doc.text("Matriks Perbandingan Berpasangan:", 14, y);
+        y += 6;
+        const cellW = (W - 28) / (N + 1);
+        doc.setFillColor(235, 240, 255);
+        doc.rect(14, y, W - 28, 7, "F");
+        doc.setTextColor(80, 100, 160);
+        doc.setFontSize(6.5);
+        doc.setFont("helvetica", "bold");
+        VARS.forEach((v, j) =>
+          doc.text(v.code, 14 + (j + 1) * cellW + cellW / 2, y + 4.8, {
+            align: "center",
+          }),
+        );
+        y += 7;
+        VARS.forEach((v, i) => {
+          if (y > 275) {
+            doc.addPage();
+            y = 14;
+          }
+          doc.setFillColor(
+            i % 2 === 0 ? 248 : 255,
+            i % 2 === 0 ? 249 : 255,
+            i % 2 === 0 ? 254 : 255,
+          );
+          doc.rect(14, y, W - 28, 7, "F");
+          doc.setTextColor(50, 50, 50);
+          doc.setFontSize(6.5);
+          doc.setFont("helvetica", "bold");
+          doc.text(v.code, 14 + cellW / 2, y + 4.8, { align: "center" });
+          VARS.forEach((_, j) => {
+            const val =
+              i === j
+                ? 1
+                : i < j
+                  ? state.pairs[`${i}_${j}`]
+                  : state.pairs[`${j}_${i}`]
+                    ? 1 / state.pairs[`${j}_${i}`]
+                    : undefined;
+            const txt =
+              val === undefined
+                ? "—"
+                : val >= 1
+                  ? val.toFixed(val === 1 ? 0 : 2)
+                  : `1/${(1 / val).toFixed(0)}`;
+            if (i === j) {
+              doc.setFont("helvetica", "bold");
+              doc.setTextColor(120, 120, 120);
+            } else if (val !== undefined) {
+              doc.setFont("helvetica", "normal");
+              doc.setTextColor(27, 91, 255);
+            } else {
+              doc.setFont("helvetica", "normal");
+              doc.setTextColor(180, 180, 180);
+            }
+            doc.text(txt, 14 + (j + 1) * cellW + cellW / 2, y + 4.8, {
+              align: "center",
+            });
+          });
+          y += 7;
+        });
+        y += 8;
+
+        // Note
+        const note = state.note || "";
+        if (note.trim()) {
+          if (y > 258) {
+            doc.addPage();
+            y = 14;
+          }
+          doc.setFillColor(254, 249, 195);
+          doc.roundedRect(10, y, W - 20, 8, 2, 2, "F");
+          doc.setFillColor(146, 64, 14);
+          doc.roundedRect(10, y, 4, 8, 1, 1, "F");
+          doc.setTextColor(146, 64, 14);
+          doc.setFontSize(7.5);
+          doc.setFont("helvetica", "bold");
+          doc.text("CATATAN / INSIGHT PAKAR", 16, y + 5.5);
+          y += 12;
+          doc.setTextColor(60, 40, 10);
+          doc.setFontSize(7.5);
+          doc.setFont("helvetica", "normal");
+          const nl = doc.splitTextToSize(note, W - 28);
+          nl.forEach((line) => {
+            if (y > 275) {
+              doc.addPage();
+              y = 14;
+            }
+            doc.text(line, 14, y);
+            y += 5.5;
+          });
+          y += 5;
+        }
+
+        // Footer
+        const pages = doc.internal.getNumberOfPages();
+        for (let p = 1; p <= pages; p++) {
+          doc.setPage(p);
+          doc.setFontSize(6.5);
+          doc.setTextColor(160, 160, 160);
+          doc.setFont("helvetica", "normal");
+          doc.text(
+            `Hal ${p}/${pages}  ·  ${nama}  ·  ${tgl}  ·  AHP Indikator Surya PLTS Terapung`,
+            W / 2,
+            293,
+            { align: "center" },
+          );
+        }
+        return doc;
+      }
+
+      function generatePDFBase64() {
+        return new Promise((resolve, reject) => {
+          try {
+            const { jsPDF } = window.jspdf;
+            const doc = buildPDFDoc(jsPDF);
+            resolve(doc.output("datauristring").split(",")[1]);
+          } catch (err) {
+            reject(err);
+          }
+        });
+      }
+
+      function downloadPDF() {
+        const btn = document.getElementById("btn-pdf");
+        btn.disabled = true;
+        btn.textContent = "⏳ Membuat PDF...";
+        try {
+          const { jsPDF } = window.jspdf;
+          const doc = buildPDFDoc(jsPDF);
+          const id = state.identity;
+          const nama = (id.nama || "Responden").replace(/\s+/g, "_");
+          const tgl = id.tanggal || new Date().toISOString().slice(0, 10);
+          doc.save(`AHP_IndikatorSurya_${nama}_${tgl}.pdf`);
+          showToast("PDF berhasil diunduh");
+        } catch (e) {
+          console.error(e);
+          showToast("Gagal membuat PDF — coba refresh");
+        }
+        btn.disabled = false;
+        btn.textContent = "⬇ Unduh PDF Hasil";
+      }
+
+      /* ═══════════════════════════════════
+   INIT
+═══════════════════════════════════ */
+      buildUI();
+      recalcSec();
+      document.getElementById("f-tgl").value = new Date()
+        .toISOString()
+        .slice(0, 10);
+    </script>
+  </body>
+</html>
