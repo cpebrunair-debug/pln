@@ -324,7 +324,7 @@ const PAGES = [
   {
     id:"s1", short:"Kriteria Utama",
     title:"1. Bobot Kriteria Utama",
-    subtitle:"Bandingkan tingkat kepentingan relatif antara tiga kriteria utama dalam menentukan potensi waduk untuk PLTS Terapung: Potensi Energi Surya, Risiko Intermitensi, dan Daya Dukung Meteorologi.",
+    subtitle:"Bandingkan tingkat kepentingan relatif antara tiga kriteria utama dalam menentukan potensi waduk untuk PLTS Terapung: Potensi Energi Surya, Risiko Ketidakstabilan Output, dan Daya Dukung Meteorologi.",
     type:"ahp",
     vars:[
       {
@@ -332,8 +332,8 @@ const PAGES = [
         desc:"Seberapa besar energi surya yang dapat dihasilkan di lokasi waduk, diukur melalui nilai PVOUT Tahunan (kWh/kWp)."
       },
       {
-        code:"K2", name:"Risiko Intermitensi",
-        desc:"Seberapa besar fluktuasi dan ketidakstabilan output PLTS akibat perubahan kondisi awan dan iradiasi — mencakup Ramp Rate, TCC, CV PVOUT, dan Seasonal Index."
+        code:"K2", name:"Risiko Ketidakstabilan Output",
+        desc:"Seberapa besar fluktuasi dan ketidakstabilan output PLTS akibat perubahan kondisi awan dan iradiasi — mencakup Intermitensi, TCC, CV PVOUT, dan Seasonal Index."
       },
       {
         code:"K3", name:"Daya Dukung Meteorologi",
@@ -342,14 +342,14 @@ const PAGES = [
     ]
   },
   {
-    id:"s2", short:"Risiko Intermitensi",
-    title:"2. Sub-Kriteria Risiko Intermitensi",
-    subtitle:"Bandingkan tingkat kepentingan relatif antar sub-indikator pembentuk skor Risiko Intermitensi (K2). Semakin penting suatu indikator, semakin besar bobotnya dalam menentukan tingkat risiko intermiten PLTS.",
+    id:"s2", short:"Risiko Ketidakstabilan Output",
+    title:"2. Sub-Kriteria Risiko Ketidakstabilan Output",
+    subtitle:"Bandingkan tingkat kepentingan relatif antar sub-indikator pembentuk skor Risiko Ketidakstabilan Output (K2). Semakin penting suatu indikator, semakin besar bobotnya dalam menentukan tingkat risiko intermiten PLTS.",
     type:"ahp",
     vars:[
       {
-        code:"RI1", name:"Ramp Rate",
-        desc:"Laju perubahan output daya PLTS per satuan waktu (jam). Ramp Rate tinggi mencerminkan fluktuasi produksi yang cepat dan sulit diprediksi, meningkatkan risiko ketidakstabilan jaringan."
+        code:"RI1", name:"Intermitensi",
+        desc:"Laju perubahan output daya PLTS per satuan waktu (jam). Intermitensi tinggi mencerminkan fluktuasi produksi yang cepat dan sulit diprediksi, meningkatkan risiko ketidakstabilan jaringan."
       },
       {
         code:"RI2", name:"Total Cloud Cover (TCC)",
@@ -645,7 +645,7 @@ PAGES.forEach((pg,idx)=>{
         </div>
         <div class="expert-note-body">
           <textarea class="expert-note-textarea" id="enote-${pg.id}" maxlength="500"
-            placeholder='Contoh: "Saya memberi bobot lebih tinggi pada Ramp Rate karena fluktuasi cepat lebih sulit dikelola oleh sistem jaringan dibanding variasi musiman yang dapat diprediksi."'
+            placeholder='Contoh: "Saya memberi bobot lebih tinggi pada Intermitensi karena fluktuasi cepat lebih sulit dikelola oleh sistem jaringan dibanding variasi musiman yang dapat diprediksi."'
             oninput="onNote('${pg.id}',this)"></textarea>
         </div>
         <div class="expert-note-footer">
